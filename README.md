@@ -45,6 +45,20 @@ flowchart LR
 
 The boxes follow the memory order in `AGENTS.md`; `global/` is optional shared context linked through `.ai/global`.
 
+### Where the structure comes from
+
+```mermaid
+flowchart LR
+    R["GAMK"] -->|generates| A["AGENTS.md"]
+    R -->|generates| AI[".ai/"]
+    R --> G["global/"]
+    AI --> L[".ai/global"]
+    G -.->|links into| L
+    style L fill:transparent,stroke:#666,stroke-dasharray: 5 5
+```
+
+GAMK generates `AGENTS.md` and `.ai/`; the repository's `global/` is exposed through the `.ai/global` link.
+
 The important shift is that the agent does not begin with an abstract “memory system”. It begins with `AGENTS.md`, then follows the project's own map to the task state, history, decisions, knowledge, rules, capabilities, and reusable structures. GAMK does not force a cloud service, a model vendor, or a particular editor; the memory remains inspectable files in the project.
 
 ## What GAMK gives you
