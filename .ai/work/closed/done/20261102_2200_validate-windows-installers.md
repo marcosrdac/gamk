@@ -22,7 +22,7 @@ Validate the PowerShell entrypoints and the Python migration-aware installer's w
 
 ## Current status
 
-The NixOS PowerShell Core probe passes through `.ai/workflows/20261102_2237_test-powershell-wrappers-on-nixos.md` and passes. It validates parsing, argument forwarding, no-write blocking, Linux-side installation, and the mother validator. It cannot validate native Windows symlink/junction behavior; that work is deferred to `.ai/work/next/000_20261102_2246_validate-native-windows-installers.md`.
+The NixOS PowerShell Core probe passes through `.ai/workflows/20261102_2237_test-powershell-wrappers-on-nixos.md` and passes. It validates parsing, argument forwarding, no-write blocking, Linux-side installation, and the mother validator. It cannot validate native Windows symlink/junction behavior; that work is deferred to `.ai/work/pool/backlog/20261102_2246_validate-native-windows-installers.md`.
 
 ## Progress
 

@@ -33,5 +33,6 @@ PowerShell Core can be probed reproducibly on NixOS with `scripts/test_powershel
 
 ## Deferred
 
+- Native Windows installer validation: `.ai/work/pool/backlog/20261102_2246_validate-native-windows-installers.md`.
 - Git submodule distribution alternative: `.ai/work/next/010_20261102_2005_study-submodule-global-source.md`.
 - Source/manifest divergence warnings: `.ai/work/next/020_20261102_2005_source-divergence-status.md`.

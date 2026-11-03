@@ -1,10 +1,13 @@
 ---
-status: planned
+status: backlog
 origin: user conversation
 branch: feat/git-ai-global-mother
 worktree: .git-worktrees/git-ai-global-mother
 related_work: ../closed/done/20261102_2200_validate-windows-installers.md
 depends_on: Windows host or Windows CI runner
+moved_at: 20261102_2248
+previous_state: planned
+backlog_reason: User decided native Windows validation is useful but not currently prioritized.
 ---
 
 # Validate native Windows installers

@@ -8,7 +8,7 @@
 
 Treat the NixOS `pwsh` probe as the completed scope for the current validation task. It covers PowerShell parsing, wrapper argument forwarding, safe planning, installation and blocking behavior, but it must not be described as native Windows validation.
 
-Move native Windows testing to the planned task `.ai/work/next/000_20261102_2246_validate-native-windows-installers.md`.
+Move native Windows testing to the backlog task `.ai/work/pool/backlog/20261102_2246_validate-native-windows-installers.md`.
 
 ## Rationale
 

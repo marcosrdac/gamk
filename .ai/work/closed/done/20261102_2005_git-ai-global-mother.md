@@ -46,7 +46,7 @@ Evolve this repository into the canonical source and installer for its existing 
 - [x] Remove accidental memory-structure additions and duplicated instruction sections.
 - [x] Verify consumer/mother separation and local workflow behavior.
 - [x] Verify generator reproducibility, `--check` no-write behavior, 33 tests, and static checks.
-- [x] Windows validation remains a separate queued task at `.ai/work/next/000_20261102_2200_validate-windows-installers.md`.
+- [x] Windows validation remains a separate deferred task in `.ai/work/pool/backlog/20261102_2246_validate-native-windows-installers.md`.
 - [x] Implement template-based mother AGENTS generator, mother-only extension source, and local workflow; add regression tests.
 - [x] User-approved root/consumer shared instructions for `.ai/global/` discovery whether it is a directory or symlink.
 - [x] Added Windows validation as a separate task in `work/next/` so it remains visible without blocking this Linux implementation task.
@@ -83,7 +83,7 @@ No commit, merge, or push was requested or performed. The feature branch remains
 
 ## Next action
 
-No further Linux implementation action remains for this task. Keep Windows validation separately queued at `.ai/work/next/000_20261102_2200_validate-windows-installers.md`; do not commit, merge, or push without an explicit request.
+No further Linux implementation action remains for this task. Keep native Windows validation deferred in `.ai/work/pool/backlog/20261102_2246_validate-native-windows-installers.md`; do not commit, merge, or push without an explicit request.
 
 ## Progress update
 
@@ -99,7 +99,7 @@ No further Linux implementation action remains for this task. Keep Windows valid
 - **Final verification:** reran generator `--check`, full 33-test suite, Bash syntax checks, and `git diff --check`; all pass. Windows tests are explicitly deferred to the separate next task.
 - **Final AGENTS audit:** compared the generated root against the initial commit and classified the differences. The `.ai/global` discovery contract, project-local instruction discovery, index changes, and generated mother appendix are approved architecture; no unapproved `.ai/memory` path was present. Removed one accidental duplicate `Project instructions` section from the consumer template, regenerated the root file, and removed a duplicate test definition that had been shadowing coverage. Added a regression assertion that the shared section occurs exactly once.
 - **Final audit verification:** generated composition matches the template plus mother extension exactly; root and consumer each contain one `Project instructions` section; consumer output contains no mother-only extension; `AGENTS.md --check`, 33 regression tests, Python compilation, Bash syntax, relative-link validation, and `git diff --check` pass.
-- **Windows status:** Linux only. Windows PowerShell forwarding, symlink creation, and junction fallback have not been run; these are tracked in `.ai/work/next/000_20261102_2200_validate-windows-installers.md`.
+- **Windows status:** Linux only. Windows PowerShell forwarding, symlink creation, and junction fallback have not been run; these are tracked in `.ai/work/pool/backlog/20261102_2246_validate-native-windows-installers.md`.
 - **Git status at latest handoff:** modified root `AGENTS.md`; untracked `.ai/`, `README.md`, `global/`, and `scripts/`; no changes in legacy repo or sibling consumer. No commit or integration performed.
 
 ### Implementation summary and process correction
