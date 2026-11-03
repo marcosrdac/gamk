@@ -21,11 +21,7 @@ GAMK is the kit that makes this possible in another repository. It provides the 
 
 ```mermaid
 flowchart LR
-    subgraph ENTRY[" "]
-        direction TB
-        A["AGENTS.md"] --> M[".ai/"]
-    end
-    ENTRY --> MEMORY
+    A["AGENTS.md"] --> M[".ai/"] --> MEMORY
 
     subgraph MEMORY[" "]
         direction TB
@@ -44,7 +40,6 @@ flowchart LR
         W ~~~ L ~~~ K ~~~ I ~~~ D ~~~ F ~~~ R ~~~ P ~~~ S ~~~ T ~~~ G
     end
 
-    style ENTRY fill:transparent,stroke:transparent
     style G fill:transparent,stroke:#666,stroke-dasharray: 5 5
 ```
 
