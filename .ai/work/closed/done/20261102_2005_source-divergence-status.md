@@ -31,7 +31,7 @@ The manifest will record source URL, full base commit, and structural schema/ver
 
 ## Next action
 
-No implementation action remains; the completed branch is ready for direct integration into `main`.
+No implementation action remains; commit `313ea6c` was fast-forwarded directly into `main`.
 
 ## Completion criteria
 
