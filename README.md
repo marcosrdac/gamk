@@ -298,6 +298,10 @@ GAMK creates the instruction contract and the reusable source that contract can 
 ```text
 gamk/
 ├── global/
+│   ├── rules/                        Reusable personal rules
+│   ├── workflows/                   Reusable procedures
+│   ├── skills/                      Reusable skills
+│   ├── hosts/                       Machine-specific facts
 │   ├── INDEX.md                     Global-context loading map
 │   └── manifest.json                Source identity/schema
 ├── scripts/

@@ -120,6 +120,9 @@ class InstallerTests(unittest.TestCase):
         self.assertNotIn("context-loading.md", global_index)
         self.assertFalse((REPOSITORY / "global" / "rules" / "system-maintenance.md").exists())
         self.assertFalse((REPOSITORY / "global" / "rules" / "context-loading.md").exists())
+        for category in ("rules", "workflows", "skills", "hosts"):
+            with self.subTest(global_category=category):
+                self.assertTrue((REPOSITORY / "global" / category).is_dir())
         local_rules = (REPOSITORY / ".ai" / "rules" / "INDEX.md").read_text(encoding="utf-8")
         self.assertIn("20261103_0057_gamk-maintenance.md", local_rules)
         self.assertIn("not consumer defaults", (REPOSITORY / ".ai" / "rules" / "20261103_0057_gamk-maintenance.md").read_text(encoding="utf-8"))
