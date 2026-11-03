@@ -1,7 +1,7 @@
 ---
 status: done
-work: ../../work/closed/done/20261102_2005_git-ai-global-mother.md
-related_decision: ../../decisions/20261102_2005_git-ai-global-mother-architecture.md
+work: ../../../work/closed/done/20261102_2005_git-ai-global-mother.md
+related_decision: ../../../decisions/20261102_2005_git-ai-global-mother-architecture.md
 ---
 
 # Installer and migration design

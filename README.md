@@ -244,7 +244,7 @@ The source manifest at `global/manifest.json` identifies the GAMK source and str
 ```json
 {
   "format": "gamk-source",
-  "schema_version": 2,
+  "schema_version": 3,
   "repository_name": "gamk"
 }
 ```
@@ -254,7 +254,7 @@ A full or local consumer receives `.ai/global-manifest.json`:
 ```json
 {
   "format": "gamk-consumer",
-  "schema_version": 2,
+  "schema_version": 3,
   "source_url": null,
   "base_commit": "<full Git commit>",
   "installation_mode": "full"
@@ -263,7 +263,7 @@ A full or local consumer receives `.ai/global-manifest.json`:
 
 The consumer manifest records a credential-free source URL when available, the full source commit used for installation, the structural schema, and the installation mode. It never records the machine-specific absolute path stored in `.ai/global`.
 
-Schema 2 uses `analyses/` for the research area. Existing consumer projects are not renamed automatically; their local state remains untouched until an explicit, user-approved migration.
+Schema 3 uses `analyses/doing`, `analyses/done`, and `analyses/wontdo` as flat research states. Existing consumer projects are not migrated or rewritten automatically; their local state remains untouched until an explicit, user-approved migration.
 
 GAMK still reads the previous `git-ai-global-source`, `git-ai-global-consumer`, and `git-ai-global` identifiers so existing installations are not made unreadable by the public rename. New installations write GAMK identifiers.
 

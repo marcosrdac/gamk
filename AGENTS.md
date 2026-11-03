@@ -60,9 +60,8 @@ Never remove the current worktree, a dirty worktree, or an unmerged branch. Neve
 ├── wiki/             # Living project knowledge base
 ├── analyses/         # Research, evidence, analysis
 │   ├── doing/
-│   └── closed/
-│       ├── done/
-│       └── wontdo/
+│   ├── done/
+│   └── wontdo/
 ├── decisions/        # Significant decisions and rationale
 ├── forms/            # Structured asynchronous user decisions
 │   ├── creating/
@@ -175,16 +174,21 @@ analyses/
 │   └── YYYYMMDD_HHMM_slug/
 │       ├── README.md       # Required entrypoint
 │       └── ...             # Research, evidence, analyses, figures
-└── closed/
-    ├── done/
-    └── wontdo/
+├── done/
+│   └── YYYYMMDD_HHMM_slug/
+│       ├── README.md
+│       └── ...
+└── wontdo/
+    └── YYYYMMDD_HHMM_slug/
+        ├── README.md
+        └── ...
 ```
 
 - `README.md` controls the analysis's state and summarizes its objective, methodology, progress, findings, evidence, uncertainties, and next steps.
 - YAML must identify `status`, originating `work` task, and relevant relationships.
 - Use `status: active | paused` while in `doing/`; document interruptions.
 - Organize supporting material freely, preserving navigability and traceability.
-- Analyses may remain open, paused, or awaiting additional information.
+- Analyses may remain open, paused, or awaiting additional information in `doing/`; completed or abandoned analyses move to `done/` or `wontdo/`.
 - Close as `done` when the defined research scope is satisfied; use `wontdo` for abandoned analyses, explaining why.
 - Separate evidence, interpretation, hypotheses, and unresolved questions.
 - Link resulting forms, decisions, wiki pages, and logs.

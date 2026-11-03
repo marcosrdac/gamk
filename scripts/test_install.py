@@ -114,11 +114,11 @@ class InstallerTests(unittest.TestCase):
             with self.subTest(path=path, section="analyses"):
                 for line in (
                     "│   ├── doing/",
-                    "│   └── closed/",
-                    "│       ├── done/",
-                    "│       └── wontdo/",
+                    "│   ├── done/",
+                    "│   └── wontdo/",
                 ):
                     self.assertIn(line, analyses)
+                self.assertNotIn("closed/", analyses)
             with self.subTest(path=path, section="decisions"):
                 self.assertNotIn("doing/", decisions)
                 self.assertNotIn("closed/", decisions)
@@ -287,6 +287,9 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue((root / "AGENTS.md").is_file())
         self.assertTrue((root / ".ai" / "work" / "doing").is_dir())
         self.assertTrue((root / ".ai" / "analyses" / "doing").is_dir())
+        self.assertTrue((root / ".ai" / "analyses" / "done").is_dir())
+        self.assertTrue((root / ".ai" / "analyses" / "wontdo").is_dir())
+        self.assertFalse((root / ".ai" / "analyses" / "closed").exists())
         self.assertFalse((root / ".ai" / "investigations").exists())
         self.assertFalse((root / ".ai" / "templates" / "project" / "AGENTS.md").exists())
         self.assertEqual((root / ".ai" / "global").resolve(), REPOSITORY / "global")
@@ -303,6 +306,22 @@ class InstallerTests(unittest.TestCase):
             0,
         )
         self.assertIn("ignore `.ai/global`", result.stdout)
+
+    def test_analysis_structure_contract_is_flat(self):
+        self.assertEqual(install.SCHEMA_VERSION, 3)
+        self.assertIn("analyses/doing", install.PROJECT_DIRECTORIES)
+        self.assertIn("analyses/done", install.PROJECT_DIRECTORIES)
+        self.assertIn("analyses/wontdo", install.PROJECT_DIRECTORIES)
+        self.assertNotIn("analyses/closed/done", install.PROJECT_DIRECTORIES)
+        self.assertNotIn("analyses/closed/wontdo", install.PROJECT_DIRECTORIES)
+        for wrapper in (
+            REPOSITORY / "scripts" / "copy-install.sh",
+            REPOSITORY / "scripts" / "copy-install.ps1",
+        ):
+            text = wrapper.read_text(encoding="utf-8")
+            self.assertIn("analyses/done", text)
+            self.assertIn("analyses/wontdo", text)
+            self.assertNotIn("analyses/closed", text)
 
     def test_status_reports_not_installed_without_writing(self):
         root = self.project()

@@ -25,7 +25,7 @@ The manifest will record source URL, full base commit, and structural schema/ver
 
 ## Associated analysis
 
-- `.ai/analyses/closed/done/20261102_2248_source-divergence-status/README.md`
+- `.ai/analyses/done/20261102_2248_source-divergence-status/README.md`
 - `.ai/decisions/20261102_2311_source-status-command.md`
 - `.ai/logs/20261102_2311_source-divergence-status.md`
 

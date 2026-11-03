@@ -79,7 +79,7 @@ No commit, merge, or push was requested or performed. The feature branch remains
 
 ## Associated analysis
 
-- `.ai/analyses/doing/20261102_2005_installer-migration-design/README.md`
+- `.ai/analyses/done/20261102_2005_installer-migration-design/README.md`
 
 ## Next action
 

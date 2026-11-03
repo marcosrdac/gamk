@@ -8,6 +8,8 @@ This repository is GAMK — Git Agent Memory Kit. It preserves a reusable `.ai/`
 
 `.ai/global-manifest.json` records the `gamk-consumer` format, installation mode, schema version, source URL (with URL credentials stripped), and full source base commit. It must not contain machine-specific absolute paths. A missing source origin is represented as `null`. Local mode intentionally has no personal `.ai/global` link. The installer still reads the legacy `git-ai-global-consumer` identifier for compatibility.
 
+Schema 3 uses flat analysis lifecycle directories: `.ai/analyses/doing/`, `.ai/analyses/done/`, and `.ai/analyses/wontdo/`. New installations create these paths. Existing consumer projects with schema 2 are not rewritten automatically; an agent-led migration must preserve or deliberately reconstruct their existing `.ai/analyses/closed/` content before updating provenance.
+
 ## Commands and safety
 
 - `.ai/templates/project/AGENTS.md` is canonical shared content. `scripts/generate_mother_agents.py` generates root `AGENTS.md` by appending `.ai/templates/mother-AGENTS.extensions.md`; shared text is not duplicated. Mother-only content, including the extension, maintenance rule, and workflow, stays under `.ai/` and never under `global/`. The extension tells mother agents to read applicable local `.ai/rules/` and consult local skills/workflows. The mother-only workflow `.ai/workflows/20261102_2200_update-agent-instructions.md` governs deliberate instruction updates, not routine installs. Shared startup attempts to read `.ai/global/INDEX.md` directly, tolerates a missing or unreadable link/file, and consults only relevant categories named by the index. Global context has no mandatory entries by default.

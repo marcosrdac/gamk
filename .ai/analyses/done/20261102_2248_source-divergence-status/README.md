@@ -1,6 +1,6 @@
 ---
 status: done
-work: ../../../../work/closed/done/20261102_2005_source-divergence-status.md
+work: ../../../work/closed/done/20261102_2005_source-divergence-status.md
 origin: user conversation
 ---
 

@@ -35,7 +35,7 @@ done
 mkdir -p "$TARGET_ROOT/.ai"
 for directory in \
     decisions forms/creating forms/pending forms/answered \
-    analyses/doing analyses/closed/done analyses/closed/wontdo \
+    analyses/doing analyses/done analyses/wontdo \
     logs rules skills templates wiki work/doing work/next \
     work/pool/backlog work/pool/blocked work/pool/ideas \
     work/closed/done work/closed/wontdo workflows; do
