@@ -1,6 +1,8 @@
 ---
-status: planned
+status: active
 origin: user conversation
+branch: feat/rename-investigations-analyses
+worktree: .git-worktrees/rename-investigations-analyses
 ---
 
 # Rename `investigations` to `analyses`
@@ -19,10 +21,20 @@ Replace the repository's public terminology `investigations` with `analyses` eve
 
 ## Constraints
 
-Do not implement this rename until the task is promoted from `next/` to `doing/`. Preserve historical records and inspect all tracked references before moving paths.
+This task has been promoted to `doing/`. Preserve historical records and inspect all tracked references before moving paths.
+
+## Progress
+
+- [x] Promoted this task from `next/` to `doing/` in its dedicated worktree.
+- [ ] Inventory and update current references.
+- [ ] Rename the structure, verify generated instructions, and complete the worktree lifecycle.
 
 ## Completion criteria
 
 - Every current user-facing and operational reference uses `analyses` consistently.
 - The renamed structure and generated instructions pass the repository test suite.
 - Historical provenance remains understandable and no unintended compatibility break is introduced.
+
+## Next action
+
+Inventory every tracked `investigations` reference and classify current paths versus historical records before editing.
