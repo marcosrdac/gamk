@@ -4,12 +4,12 @@ This workflow is local to the canonical mother repository. It is not shipped to 
 
 ## When to use
 
-Run this workflow only when changing shared instructions in `global/templates/project/AGENTS.md` or mother-only additions in `.ai/templates/mother-AGENTS.extensions.md`. It is not part of routine installation or project task startup.
+Run this workflow only when changing shared instructions in `.ai/templates/project/AGENTS.md` or mother-only additions in `.ai/templates/mother-AGENTS.extensions.md`. It is not part of routine installation or project task startup.
 
 ## Procedure
 
 1. Read `.ai/rules/20261102_2005_agents-parity.md` and inspect the current consumer template and mother extensions.
-2. Put common instructions in `global/templates/project/AGENTS.md`. Put instructions that apply only to this canonical source repository in `.ai/templates/mother-AGENTS.extensions.md`. Do not put mother-only instructions under `global/` or duplicate shared text in the extension.
+2. Put common instructions in `.ai/templates/project/AGENTS.md`. Put instructions that apply only to this canonical source repository in `.ai/templates/mother-AGENTS.extensions.md`. Do not put mother-only instructions under `global/` or duplicate shared text in the extension.
 3. Do not hand-edit the generated root `AGENTS.md`.
 4. Run `python scripts/generate_mother_agents.py` from the repository root.
 5. Run `python scripts/generate_mother_agents.py --check`; confirm it reports the root file is up to date.

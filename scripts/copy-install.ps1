@@ -41,7 +41,7 @@ foreach ($relative in $directories) {
     New-Item -ItemType Directory -Force -Path (Join-Path $TargetRoot (Join-Path '.ai' $relative)) | Out-Null
 }
 
-Copy-Item -LiteralPath (Join-Path $SourceRoot 'global/templates/project/AGENTS.md') -Destination (Join-Path $TargetRoot 'AGENTS.md')
+Copy-Item -LiteralPath (Join-Path $SourceRoot '.ai/templates/project/AGENTS.md') -Destination (Join-Path $TargetRoot 'AGENTS.md')
 Write-Output "Files copied into $TargetRoot"
 Write-Output 'This minimal installer did not configure a global link or write a provenance manifest.'
 Write-Output 'For global linking, provenance, broader conflict detection, or migration planning, use scripts/install.ps1.'
