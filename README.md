@@ -22,19 +22,35 @@ GAMK is the kit that makes this possible in another repository. It provides the 
 ```mermaid
 flowchart TD
     A["AGENTS.md"] --> M[".ai/"]
-    M --> W["work/"]
-    M --> L["logs/"]
-    M --> D["decisions/"]
-    M --> K["wiki/"]
-    M --> I["investigations/"]
-    M --> F["forms/"]
-    M --> P["workflows/"]
-    M --> S["skills/"]
-    M --> R["rules/"]
-    M --> T["templates/"]
-    M -.-> G["global/"]
 
-    W ~~~ L ~~~ D ~~~ K ~~~ I ~~~ F ~~~ P ~~~ S ~~~ R ~~~ T ~~~ G
+    subgraph MEMORY[" "]
+        direction TB
+        W["work/"]
+        L["logs/"]
+        D["decisions/"]
+        K["wiki/"]
+        I["investigations/"]
+        F["forms/"]
+        P["workflows/"]
+        S["skills/"]
+        R["rules/"]
+        T["templates/"]
+        G["global/"]
+
+        W ~~~ L ~~~ D ~~~ K ~~~ I ~~~ F ~~~ P ~~~ S ~~~ R ~~~ T ~~~ G
+    end
+
+    M --> W
+    M --> L
+    M --> D
+    M --> K
+    M --> I
+    M --> F
+    M --> P
+    M --> S
+    M --> R
+    M --> T
+    M -.-> G
     style G fill:transparent,stroke:#666,stroke-dasharray: 5 5
 ```
 
