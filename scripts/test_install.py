@@ -91,9 +91,9 @@ class InstallerTests(unittest.TestCase):
             "## 6. Analyses",
             "## 7. Decisions",
             "## 8. Forms",
-            "## 9. Workflows",
-            "## 10. Skills",
-            "## 11. Rules",
+            "## 9. Rules",
+            "## 10. Workflows",
+            "## 11. Skills",
             "## 12. Templates",
             "## 13. Operating Principles",
         ):

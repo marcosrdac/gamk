@@ -11,9 +11,9 @@ Personal global content must not contain consumer-project facts or credentials. 
 
 ## Load When Relevant
 
-- `skills/` — reusable procedures, including deliberate structural upgrades; inspect relevant skill content when the task calls for it.
 - `rules/` — personal defaults and scoped operating preferences. Rules listed under “Always Read” are mandatory; read other applicable rules before acting in their domain.
 - `workflows/` — repeatable operational procedures.
+- `skills/` — reusable procedures, including deliberate structural upgrades; inspect relevant skill content when the task calls for it.
 - `hosts/` — machine-specific facts; never credentials.
 
 Update this index when adding discoverable content.

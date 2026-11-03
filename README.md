@@ -31,13 +31,13 @@ flowchart LR
         I["analyses/"]
         D["decisions/"]
         F["forms/"]
+        R["rules/"]
         P["workflows/"]
         S["skills/"]
-        R["rules/"]
         T["templates/"]
         G["global/"]
 
-        W ~~~ L ~~~ K ~~~ I ~~~ D ~~~ F ~~~ P ~~~ S ~~~ R ~~~ T ~~~ G
+        W ~~~ L ~~~ K ~~~ I ~~~ D ~~~ F ~~~ R ~~~ P ~~~ S ~~~ T ~~~ G
     end
 
     style G fill:transparent,stroke:#666,stroke-dasharray: 5 5
@@ -161,7 +161,7 @@ The consumer's `.ai/global` link contains a machine-specific path and should nor
 
 The installed `AGENTS.md` gives the agent the startup contract. In broad terms, the agent should:
 
-1. discover the project's applicable rules, skills, and workflows;
+1. discover the project's applicable rules, then follow relevant workflows and consult useful skills;
 2. inspect `.ai/work/doing/` before starting new work;
 3. preserve continuity in tasks, logs, wiki, analyses, decisions, and forms;
 4. follow the project's instructions before optional global defaults;
@@ -177,9 +177,9 @@ The directories have distinct jobs:
 - `decisions/` stores durable commitments and trade-offs;
 - `forms/` stores structured, asynchronous user decisions;
 - `global/` is optional shared context, either a directory or local symlink;
+- `rules/` contains mandatory context-specific behavior;
 - `workflows/` stores repeatable procedures;
 - `skills/` stores specialized approaches;
-- `rules/` contains mandatory context-specific behavior;
 - `templates/` contains reusable document structures.
 
 This division prevents a chat transcript, a task queue, current knowledge, a permanent decision, and a one-off analysis from becoming one unsearchable pile.
@@ -299,8 +299,8 @@ GAMK creates the instruction contract and the reusable source that contract can 
 gamk/
 ├── global/
 │   ├── rules/                       Reusable rules
-│   ├── skills/                      Reusable skills
 │   ├── workflows/                  Reusable procedures
+│   ├── skills/                      Reusable skills
 │   ├── INDEX.md                     Global-context loading map
 │   └── manifest.json                Source identity/schema
 ├── scripts/
@@ -317,8 +317,8 @@ gamk/
 │   ├── decisions/                   Architectural commitments
 │   ├── templates/project/           Local consumer AGENTS.md template
 │   ├── rules/                       Mother-local mandatory rules
-│   ├── skills/                      Mother-local capabilities
-│   └── workflows/                   Mother-local procedures
+│   ├── workflows/                  Mother-local procedures
+│   └── skills/                      Mother-local capabilities
 ├── AGENTS.md                        Generated mother instructions
 └── README.md                        This entrypoint
 ```
@@ -393,11 +393,11 @@ Native Windows validation is still required for NTFS symlink permissions, `cmd.e
 
 - [`global/INDEX.md`](global/INDEX.md) — reusable agent context and loading rules;
 - [`gamk.md`](.ai/wiki/gamk.md) — architecture and operations;
+- [`20261102_2200_update-agent-instructions.md`](.ai/workflows/20261102_2200_update-agent-instructions.md) — generated instruction workflow;
+- [`20261102_2321_finish-completed-worktree.md`](.ai/workflows/20261102_2321_finish-completed-worktree.md) — completed-worktree lifecycle;
 - [`20261102_2005_agents-parity.md`](.ai/skills/20261102_2005_agents-parity.md) — shared/mother instruction parity;
 - [`20261102_2005_structural-upgrade.md`](.ai/skills/20261102_2005_structural-upgrade.md) — deliberate consumer upgrades;
-- [`20261102_2239_powershell-wrapper-validation.md`](.ai/skills/20261102_2239_powershell-wrapper-validation.md) — NixOS PowerShell validation;
-- [`20261102_2200_update-agent-instructions.md`](.ai/workflows/20261102_2200_update-agent-instructions.md) — generated instruction workflow;
-- [`20261102_2321_finish-completed-worktree.md`](.ai/workflows/20261102_2321_finish-completed-worktree.md) — completed-worktree lifecycle.
+- [`20261102_2239_powershell-wrapper-validation.md`](.ai/skills/20261102_2239_powershell-wrapper-validation.md) — NixOS PowerShell validation.
 
 ## In short
 

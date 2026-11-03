@@ -55,9 +55,9 @@ Never remove the current worktree, a dirty worktree, or an unmerged branch. Neve
 │   ├── pending/
 │   └── answered/
 ├── global/           # Optional shared context (directory or local symlink)
+├── rules/            # Mandatory context-specific instructions
 ├── workflows/        # Repeatable operational procedures
 ├── skills/           # Specialized agent capabilities
-├── rules/            # Mandatory context-specific instructions
 └── templates/        # Document and artifact templates
 ```
 
@@ -65,9 +65,9 @@ Never remove the current worktree, a dirty worktree, or an unmerged branch. Neve
 
 **Relationship:** `work/` tracks every activity; other directories contain associated artifacts, knowledge, or operational resources. Every analysis, form creation, documentation change, or other substantive activity must be tracked by a work task.
 
-**Project instructions:** At startup, discover applicable project rules in `.ai/rules/` and read each rule relevant to the task before acting. Discover project skills in `.ai/skills/` and workflows in `.ai/workflows/`; consult relevant ones. These project-local instructions are distinct from optional shared global context.
+**Project instructions:** At startup, discover applicable project rules in `.ai/rules/` and read each rule relevant to the task before acting. Follow relevant workflows in `.ai/workflows/`, then consult project skills in `.ai/skills/` when they can improve the work. These project-local instructions are distinct from optional shared global context.
 
-**Optional shared context:** If `.ai/global/` exists as a directory or symlink, read its `INDEX.md` when present. Follow any “Always Read” instructions there (including applicable mandatory rules); also load relevant available `rules/`, `skills/`, and `workflows/` as indicated by the index and task. Do not assume every category exists. Global guidance is a personal default: explicit task instructions take precedence over project instructions, which take precedence over global context. If `.ai/global/` is absent, dangling, or unreadable, continue with project context; it must not be required for collaborators.
+**Optional shared context:** If `.ai/global/` exists as a directory or symlink, read its `INDEX.md` when present. Follow any “Always Read” instructions there (including applicable mandatory rules); also load relevant available `rules/`, `workflows/`, and `skills/` as indicated by the index and task. Do not assume every category exists. Global guidance is a personal default: explicit task instructions take precedence over project instructions, which take precedence over global context. If `.ai/global/` is absent, dangling, or unreadable, continue with project context; it must not be required for collaborators.
 
 ## 3. Work Management
 
@@ -240,33 +240,7 @@ Avoid fragmented questions, unnecessary back-and-forth, or requiring the user to
 
 A pending form may remain pending indefinitely without blocking unrelated work. Its originating task may be completed or blocked according to its actual completion criteria.
 
-## 9. Workflows
-
-`workflows/<YYYYMMDD>_<HHMM>_<slug>.md`
-
-Workflows document established, repeatable procedures: development setup, deployment, migrations, authentication, verification, releases, etc.
-
-- Explore `workflows/` before reconstructing an existing operational procedure.
-- Follow documented procedures while validating their applicability to the current environment.
-- Update workflows when verified procedures change.
-- Skills may reference or orchestrate multiple workflows.
-- Discover workflows through directory listings; no mandatory index in `AGENTS.md`.
-
-## 10. Skills
-
-`skills/<YYYYMMDD>_<HHMM>_<slug>.md`
-
-Skills describe specialized agent capabilities, approaches, and reusable problem-solving methods. They may reference workflows, templates, rules, and other resources.
-
-- Consult available skills when they could improve the work.
-- Unlike rules, skills are optional unless explicitly required by an applicable instruction.
-- Maintain a discoverable index in `.ai/` documentation whenever project-local skills are created, renamed, or removed; global skills remain indexed by `.ai/global/INDEX.md` or relevant global documentation.
-
-**Skills index:**
-
-Discover installed skills by listing `.ai/skills/` and optional `.ai/global/skills/`.
-
-## 11. Rules
+## 9. Rules
 
 `rules/<YYYYMMDD>_<HHMM>_<slug>.md`
 
@@ -281,11 +255,37 @@ Rules contain mandatory context-specific instructions.
 
 Discover applicable rules by listing `.ai/rules/` and optional `.ai/global/rules/`; read each applicable rule before acting in its domain.
 
+## 10. Workflows
+
+`workflows/<YYYYMMDD>_<HHMM>_<slug>.md`
+
+Workflows document established, repeatable procedures: development setup, deployment, migrations, authentication, verification, releases, etc.
+
+- Explore `workflows/` before reconstructing an existing operational procedure.
+- Follow documented procedures while validating their applicability to the current environment.
+- Update workflows when verified procedures change.
+- Skills may reference or orchestrate multiple workflows.
+- Discover workflows through directory listings; no mandatory index in `AGENTS.md`.
+
+## 11. Skills
+
+`skills/<YYYYMMDD>_<HHMM>_<slug>.md`
+
+Skills describe specialized agent capabilities, approaches, and reusable problem-solving methods. They may reference workflows, templates, rules, and other resources.
+
+- Consult available skills when they could improve the work.
+- Unlike rules, skills are optional unless explicitly required by an applicable instruction.
+- Maintain a discoverable index in `.ai/` documentation whenever project-local skills are created, renamed, or removed; global skills remain indexed by `.ai/global/INDEX.md` or relevant global documentation.
+
+**Skills index:**
+
+Discover installed skills by listing `.ai/skills/` and optional `.ai/global/skills/`.
+
 ## 12. Templates
 
 `templates/`
 
-Reusable structures for tasks, logs, decisions, analyses, forms, skills, rules, workflows, and other artifacts.
+Reusable structures for tasks, logs, decisions, analyses, forms, rules, workflows, skills, and other artifacts.
 
 - Discover templates through directory listings.
 - Use the appropriate template when creating an artifact.
@@ -302,7 +302,7 @@ Reusable structures for tasks, logs, decisions, analyses, forms, skills, rules, 
 - **Keep memory current:** `wiki/` for lasting understanding, `decisions/` for commitments, `logs/` for the ongoing project narrative.
 - **Support asynchronous decisions:** provide comprehensive, independently answerable forms; respect partial responses.
 - **Write efficiently:** favor accurate, structured, useful records over redundant narration. Do not confuse concise writing with superficial analysis.
-- **Respect instructions:** applicable rules are mandatory; skills and workflows support execution.
+- **Respect instructions:** applicable rules are mandatory; workflows prescribe repeatable execution, and skills provide optional specialized support.
 - **Preserve `AGENTS.md`:** do not modify it without explicit user instruction. If an `.ai/workflows/` workflow applies to maintaining instructions, follow that workflow.
 - **Never invent context:** verify existing state, investigate uncertainty, and preserve evidence.
 
@@ -318,7 +318,7 @@ At startup, after the shared project context map:
 
 1. Read `.ai/global/INDEX.md` and follow its **Always Read** entries.
 2. Read every applicable mother-local rule in `.ai/rules/` before acting in its domain. These are repository-specific instructions; do not treat them as consumer defaults or copy them into the consumer template.
-3. Consult mother-local skills in `.ai/skills/` when relevant, and workflows in `.ai/workflows/` for repeatable procedures.
+3. Follow relevant mother-local workflows in `.ai/workflows/`, then consult mother-local skills in `.ai/skills/` when they can improve the work.
 4. Keep consumer-shared context in `.ai/templates/project/` and mother-only instructions in `.ai/`. Do not duplicate shared text in these extensions.
 
 ### Maintain generated agent instructions
