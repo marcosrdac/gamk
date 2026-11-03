@@ -101,6 +101,28 @@ class InstallerTests(unittest.TestCase):
                 self.assertIn(shared_contract, root)
                 self.assertIn(shared_contract, template)
 
+    def test_documented_ai_tree_matches_lifecycle_layout(self):
+        for path in (
+            REPOSITORY / "AGENTS.md",
+            REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md",
+        ):
+            text = path.read_text(encoding="utf-8")
+            tree = text.split("```text\n.ai/\n", 1)[1].split("```", 1)[0]
+            analyses = tree.split("├── analyses/", 1)[1].split("├── decisions/", 1)[0]
+            decisions = tree.split("├── decisions/", 1)[1].split("├── forms/", 1)[0]
+
+            with self.subTest(path=path, section="analyses"):
+                for line in (
+                    "│   ├── doing/",
+                    "│   └── closed/",
+                    "│       ├── done/",
+                    "│       └── wontdo/",
+                ):
+                    self.assertIn(line, analyses)
+            with self.subTest(path=path, section="decisions"):
+                self.assertNotIn("doing/", decisions)
+                self.assertNotIn("closed/", decisions)
+
     def test_mother_extension_names_local_rules_and_workflow(self):
         text = (REPOSITORY / ".ai/templates/mother-AGENTS.extensions.md").read_text(encoding="utf-8")
         self.assertIn("canonical GAMK source repository", text)

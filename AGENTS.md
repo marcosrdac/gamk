@@ -58,12 +58,12 @@ Never remove the current worktree, a dirty worktree, or an unmerged branch. Neve
 │       └── wontdo/
 ├── logs/             # Chronological project journal
 ├── wiki/             # Living project knowledge base
-├── analyses/        # Research, evidence, analysis
-├── decisions/        # Significant decisions and rationale
+├── analyses/         # Research, evidence, analysis
 │   ├── doing/
 │   └── closed/
 │       ├── done/
 │       └── wontdo/
+├── decisions/        # Significant decisions and rationale
 ├── forms/            # Structured asynchronous user decisions
 │   ├── creating/
 │   ├── pending/
