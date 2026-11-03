@@ -66,11 +66,11 @@ class InstallerTests(unittest.TestCase):
         self.assertIn(str(root / "AGENTS.md"), result.stdout)
         self.assertIn(install.source_identity(REPOSITORY)[0], result.stdout)
         self.assertIn("do not replace it wholesale", result.stdout)
-        self.assertIn(str(REPOSITORY / "global" / "templates" / "project" / "AGENTS.md"), result.stdout)
+        self.assertIn(str(REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md"), result.stdout)
 
     def test_root_and_consumer_agents_are_aligned(self):
         root = (REPOSITORY / "AGENTS.md").read_text(encoding="utf-8")
-        template = (REPOSITORY / "global" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
+        template = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
         self.assertEqual(template.count("**Project instructions:**"), 1)
         self.assertEqual(root.count("**Project instructions:**"), 1)
         for shared_contract in (
@@ -105,7 +105,7 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("never installed into consumer projects", text)
 
     def test_consumer_agents_describe_global_directory_and_symlink_loading(self):
-        text = (REPOSITORY / "global" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
+        text = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("as a directory or symlink", text)
         self.assertIn("Follow any “Always Read” instructions there", text)
         self.assertIn("applicable mandatory rules", text)
@@ -116,7 +116,7 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("follow every “Always Read” entry", (REPOSITORY / "global" / "rules" / "context-loading.md").read_text(encoding="utf-8"))
 
     def test_consumer_agents_do_not_embed_mother_only_skill_or_rule_names(self):
-        text = (REPOSITORY / "global" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
+        text = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
         self.assertNotIn("20261102_2005_agents-parity.md", text)
         self.assertNotIn("20261102_2005_structural-upgrade.md", text)
         self.assertIn("optional `.ai/global/rules/`", text)
@@ -127,7 +127,7 @@ class InstallerTests(unittest.TestCase):
         result = self.invoke_generator()
         self.assertEqual(result.returncode, 0, result.stderr)
         generated = (REPOSITORY / "AGENTS.md").read_text(encoding="utf-8")
-        template = (REPOSITORY / "global" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
+        template = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
         extension = (REPOSITORY / ".ai" / "templates" / "mother-AGENTS.extensions.md").read_text(encoding="utf-8").strip()
 
         self.assertTrue(generated.startswith(template.rstrip() + "\n\n"))
@@ -207,6 +207,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((root / "AGENTS.md").is_file())
         self.assertTrue((root / ".ai" / "work" / "doing").is_dir())
+        self.assertFalse((root / ".ai" / "templates" / "project" / "AGENTS.md").exists())
         self.assertEqual((root / ".ai" / "global").resolve(), REPOSITORY / "global")
         manifest = json.loads((root / ".ai" / "global-manifest.json").read_text())
         self.assertEqual(manifest["format"], install.CONSUMER_MANIFEST_FORMAT)

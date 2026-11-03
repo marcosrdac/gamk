@@ -270,7 +270,7 @@ The repository is both a reusable source and a maintained project in its own rig
 
 ```mermaid
 flowchart LR
-    T["global/templates/project/AGENTS.md<br/>shared consumer instructions"]
+    T[".ai/templates/project/AGENTS.md<br/>shared consumer instructions"]
     X[".ai/templates/mother-AGENTS.extensions.md<br/>mother-only additions"]
     N["scripts/generate_mother_agents.py"]
     A["root AGENTS.md<br/>generated instruction contract"]
@@ -296,7 +296,6 @@ GAMK creates the instruction contract and the reusable source that contract can 
 ```text
 gamk/
 ├── global/
-│   ├── templates/project/           Shared consumer AGENTS.md and starter files
 │   ├── rules/                       Reusable rules
 │   ├── skills/                      Reusable skills
 │   ├── workflows/                  Reusable procedures
@@ -314,6 +313,7 @@ gamk/
 │   ├── logs/                        Project journal
 │   ├── wiki/                        Current architecture/operations knowledge
 │   ├── decisions/                   Architectural commitments
+│   ├── templates/project/           Local consumer AGENTS.md template
 │   ├── rules/                       Mother-local mandatory rules
 │   ├── skills/                      Mother-local capabilities
 │   └── workflows/                   Mother-local procedures
@@ -321,7 +321,7 @@ gamk/
 └── README.md                        This entrypoint
 ```
 
-`global/templates/project/AGENTS.md` is the canonical shared instruction source. The root `AGENTS.md` is generated from that template plus `.ai/templates/mother-AGENTS.extensions.md`; it must not be edited by hand.
+`.ai/templates/project/AGENTS.md` is the canonical shared instruction source and remains local to GAMK. The root `AGENTS.md` is generated from that template plus `.ai/templates/mother-AGENTS.extensions.md`; it must not be edited by hand. Consumer projects receive the generated `AGENTS.md`, not this source template.
 
 ## How to maintain GAMK
 
@@ -337,7 +337,7 @@ Create feature worktrees under `.git-worktrees/`, make the branch clean and test
 
 When changing agent instructions:
 
-1. put consumer-shared text in `global/templates/project/AGENTS.md`;
+1. put consumer-shared text in `.ai/templates/project/AGENTS.md`;
 2. put mother-only text in `.ai/templates/mother-AGENTS.extensions.md`;
 3. run `python scripts/generate_mother_agents.py`;
 4. run it again with `--check`;

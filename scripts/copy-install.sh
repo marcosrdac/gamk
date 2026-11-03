@@ -42,7 +42,7 @@ for directory in \
     mkdir -p "$TARGET_ROOT/.ai/$directory"
 done
 
-cp "$SOURCE_ROOT/global/templates/project/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
+cp "$SOURCE_ROOT/.ai/templates/project/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
 printf 'Files copied into %s\n' "$TARGET_ROOT"
 printf '%s\n' \
     'This minimal installer did not configure a global link or write a provenance manifest.' \

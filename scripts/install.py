@@ -184,7 +184,7 @@ def source_commit_is_ancestor(source: Path, base_commit: str, current_commit: st
 
 
 def template_destinations(source: Path) -> tuple[Path, ...]:
-    template = source / "global/templates/project"
+    template = source / ".ai/templates/project"
     if not template.is_dir():
         raise RuntimeError(f"Consumer template directory not found: {template}")
     result = []
@@ -314,7 +314,7 @@ def render_migration_prompt(target: Target, result: Preflight) -> str:
     findings = "\n".join(f"- `{s.path}` — {s.reason}" for s in result.signals) or "- No known signals (not a semantic compatibility guarantee)."
     known = "\n".join(f"- `{target.root / p}`" for p in (*AGENT_FILES, *AGENT_DIRS))
     source_agents = result.source_root / "AGENTS.md"
-    consumer_agents = result.source_root / "global/templates/project/AGENTS.md"
+    consumer_agents = result.source_root / ".ai/templates/project/AGENTS.md"
     return f"""Migration request for the agent responsible for this repository
 
 Target repository: `{target.root}`
@@ -526,7 +526,7 @@ def install(target: Target, result: Preflight, mode: str) -> int:
         print("Ignore `.ai/global` before committing; the installer did not edit Git configuration or the index.")
         return 0
 
-    template = result.source_root / "global/templates/project"
+    template = result.source_root / ".ai/templates/project"
     created: list[Path] = []
     created_dirs: list[Path] = []
     try:

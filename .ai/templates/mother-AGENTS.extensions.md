@@ -9,7 +9,7 @@ At startup, after the shared project context map:
 1. Read `.ai/global/INDEX.md` and follow its **Always Read** entries.
 2. Read every applicable mother-local rule in `.ai/rules/` before acting in its domain. These are repository-specific instructions; do not treat them as consumer defaults or copy them into the consumer template.
 3. Consult mother-local skills in `.ai/skills/` when relevant, and workflows in `.ai/workflows/` for repeatable procedures.
-4. Keep consumer-shared context in `global/templates/project/` and mother-only instructions in `.ai/`. Do not duplicate shared text in these extensions.
+4. Keep consumer-shared context in `.ai/templates/project/` and mother-only instructions in `.ai/`. Do not duplicate shared text in these extensions.
 
 ### Maintain generated agent instructions
 
