@@ -9,7 +9,7 @@ Guide a deliberate upgrade of an installed `.ai/` structure using this repositor
 1. Consumer root `AGENTS.md` and all project instruction/configuration files relevant to the change.
 2. Consumer `.ai/` context map, pending work, decisions, rules, current memory, and any legacy/archived structures implicated by the proposed change.
 3. Consumer `.ai/<manifest>` provenance: source URL, installed base commit, and structural schema/version.
-4. The mother repository's current `global/templates/project/` and the source history/diff from the recorded base commit to the candidate commit. Do not infer a local absolute path from the manifest; use the available `.ai/global` link, a configured checkout, or the recorded Git URL as appropriate.
+4. The mother repository's current `.ai/templates/project/` and the source history/diff from the recorded base commit to the candidate commit. Do not infer a local absolute path from the manifest; use the available `.ai/global` link, a configured checkout, or the recorded Git URL as appropriate.
 5. Actual consumer files and Git status; distinguish committed, modified, ignored, and untracked user data.
 
 ## Method

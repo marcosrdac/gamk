@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Sequence
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 PROJECT_NAME = "GAMK"
 PROJECT_SLUG = "gamk"
 SOURCE_MANIFEST_FORMAT = "gamk-source"
@@ -23,7 +23,7 @@ LEGACY_REPOSITORY_NAME = "git-ai-global"
 MANIFEST = Path(".ai/global-manifest.json")
 PROJECT_DIRECTORIES = (
     "decisions", "forms/creating", "forms/pending", "forms/answered",
-    "investigations/doing", "investigations/closed/done", "investigations/closed/wontdo",
+    "analyses/doing", "analyses/closed/done", "analyses/closed/wontdo",
     "logs", "rules", "skills", "templates", "wiki", "work/doing", "work/next",
     "work/pool/backlog", "work/pool/blocked", "work/pool/ideas",
     "work/closed/done", "work/closed/wontdo", "workflows",

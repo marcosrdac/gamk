@@ -1,5 +1,5 @@
 ---
-status: active
+status: done
 origin: user conversation
 branch: feat/rename-investigations-analyses
 worktree: .git-worktrees/rename-investigations-analyses
@@ -26,8 +26,8 @@ This task has been promoted to `doing/`. Preserve historical records and inspect
 ## Progress
 
 - [x] Promoted this task from `next/` to `doing/` in its dedicated worktree.
-- [ ] Inventory and update current references.
-- [ ] Rename the structure, verify generated instructions, and complete the worktree lifecycle.
+- [x] Inventory and update current references.
+- [x] Rename the structure, verify generated instructions, and complete the worktree lifecycle.
 
 ## Completion criteria
 
@@ -37,4 +37,4 @@ This task has been promoted to `doing/`. Preserve historical records and inspect
 
 ## Next action
 
-Inventory every tracked `investigations` reference and classify current paths versus historical records before editing.
+The repository-wide terminology migration is ready to integrate. The task filename/branch retain the original request slug for continuity, and historical records retain their provenance while pointing to the renamed path.

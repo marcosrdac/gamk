@@ -2,7 +2,7 @@
 
 - **Status:** Confirmed during implementation on 2026-11-02.
 - **Originating work:** `010_20261102_2005_source-divergence-status`.
-- **Investigation:** `20261102_2248_source-divergence-status`.
+- **Analysis:** `20261102_2248_source-divergence-status`.
 - **Branch/worktree:** `feat/git-ai-global-mother` / `.git-worktrees/git-ai-global-mother`.
 
 ## Decision

@@ -2,7 +2,7 @@
 
 - **Status:** Confirmed interpretation for implementation; detailed detector remains testable and revisable.
 - **Originating work:** `010_20261102_2005_git-ai-global-mother.md`.
-- **Investigation:** `../investigations/doing/20261102_2005_installer-migration-design/README.md`.
+- **Analysis:** `../analyses/doing/20261102_2005_installer-migration-design/README.md`.
 - **Origin:** User conversation on 2026-11-02.
 
 ## Decision

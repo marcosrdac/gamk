@@ -23,9 +23,9 @@ Determine how agents/users should be warned when `.ai/global-manifest.json`'s ba
 
 The manifest will record source URL, full base commit, and structural schema/version without an absolute local path. A global upgrade skill will guide deliberate user-approved changes. No automatic update or rewrite is authorized.
 
-## Associated investigation
+## Associated analysis
 
-- `.ai/investigations/closed/done/20261102_2248_source-divergence-status/README.md`
+- `.ai/analyses/closed/done/20261102_2248_source-divergence-status/README.md`
 - `.ai/decisions/20261102_2311_source-status-command.md`
 - `.ai/logs/20261102_2311_source-divergence-status.md`
 

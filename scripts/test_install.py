@@ -73,19 +73,23 @@ class InstallerTests(unittest.TestCase):
         template = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
         self.assertEqual(template.count("**Project instructions:**"), 1)
         self.assertEqual(root.count("**Project instructions:**"), 1)
+        self.assertIn("analyses/", root)
+        self.assertIn("analyses/", template)
+        self.assertNotIn("investigations/", root)
+        self.assertNotIn("investigations/", template)
         for shared_contract in (
             "**Optional shared context:**",
             "A dedicated worktree is temporary execution space, not permanent project inventory.",
             "Never remove the current worktree, a dirty worktree, or an unmerged branch.",
             "explicit task instructions take precedence over project instructions",
             "**Discovery:** Treat `.ai/` as the repository's persistent memory.",
-            "Every investigation, form creation, documentation change, or other substantive activity must be tracked by a work task.",
+            "Every analysis, form creation, documentation change, or other substantive activity must be tracked by a work task.",
             "**Project instructions:** At startup, discover applicable project rules in `.ai/rules/`",
             "## 3. Work Management",
             "## 4. Logs",
             "## 5. Wiki",
             "## 6. Decisions",
-            "## 7. Investigations",
+            "## 7. Analyses",
             "## 8. Forms",
             "## 9. Workflows",
             "## 10. Skills",
@@ -207,6 +211,8 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((root / "AGENTS.md").is_file())
         self.assertTrue((root / ".ai" / "work" / "doing").is_dir())
+        self.assertTrue((root / ".ai" / "analyses" / "doing").is_dir())
+        self.assertFalse((root / ".ai" / "investigations").exists())
         self.assertFalse((root / ".ai" / "templates" / "project" / "AGENTS.md").exists())
         self.assertEqual((root / ".ai" / "global").resolve(), REPOSITORY / "global")
         manifest = json.loads((root / ".ai" / "global-manifest.json").read_text())

@@ -14,7 +14,7 @@ Move native Windows validation out of the immediate `next/` queue into `pool/bac
 ## Plan
 
 1. Move the native Windows task while preserving its timestamp and slug.
-2. Update current task, decision, investigation, and documentation pointers.
+2. Update current task, decision, analysis, and documentation pointers.
 3. Record the prioritization rationale in a decision and log.
 4. Close this bookkeeping task and integrate the update directly into `main`.
 

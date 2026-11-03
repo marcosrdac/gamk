@@ -77,9 +77,9 @@ User asked to reopen this task and explicitly track remaining verification. Do n
 
 No commit, merge, or push was requested or performed. The feature branch remains isolated and uncommitted.
 
-## Associated investigation
+## Associated analysis
 
-- `.ai/investigations/doing/20261102_2005_installer-migration-design/README.md`
+- `.ai/analyses/doing/20261102_2005_installer-migration-design/README.md`
 
 ## Next action
 
@@ -91,7 +91,7 @@ No further Linux implementation action remains for this task. Keep native Window
 
 - **Current checkout:** branch `feat/git-ai-global-mother`, worktree `.git-worktrees/git-ai-global-mother`; HEAD remains base commit `40c317c997ecf6ca4bdc86155945c1e890ef8f4d`. All implementation is uncommitted and confined to this worktree. No merge/push has occurred.
 - **AGENTS authorization:** user accepted the root skill/rule index entries after confirming they are isolated to this feature worktree, and later explicitly approved aligning the root instructions with the consumer template. The main worktree remains untouched.
-- **Current files:** root `AGENTS.md`; `global/` source and consumer template; `scripts/install.py`, Bash/PowerShell wrappers, Python-free Bash/PowerShell copy installers, and `scripts/test_install.py`; `.ai/` tasks/decisions/investigation/log/wiki. Mother link is `.ai/global -> ../global` and resolves to `global/`.
+- **Current files:** root `AGENTS.md`; `global/` source and consumer template; `scripts/install.py`, Bash/PowerShell wrappers, Python-free Bash/PowerShell copy installers, and `scripts/test_install.py`; `.ai/` tasks/decisions/analysis/log/wiki. Mother link is `.ai/global -> ../global` and resolves to `global/`.
 - **Product paths:** Python installer is the migration-aware planner/installer/link repair; `copy-install.sh` and `copy-install.ps1` are deliberately limited no-Python bootstrap for an empty/new project. README documents boundaries.
 - **Recent safety fixes:** `plan-mother` and `init-mother` are now read-only validators; neither creates or changes the source checkout's tracked link. Both fail if it is missing/wrong. Global-only install blocks occupied destinations and accepts only a destination resolving to this source's `global/`. Duplicate idempotency logic removed.
 - **Template review:** user approved a template-source/generator model. Shared operating instructions cover `.ai/global/` as directory or symlink and follow its index. Mother-only instructions are in `.ai/templates/mother-AGENTS.extensions.md`, not `global/`; the workflow is in `.ai/workflows/`.
@@ -104,7 +104,7 @@ No further Linux implementation action remains for this task. Keep native Window
 
 ### Implementation summary and process correction
 
-- Recreated the original `.ai/` structure with `.gitkeep` placeholders where Git would otherwise omit empty directories; added decisions, investigation, logs, wiki, and deferred tasks.
+- Recreated the original `.ai/` structure with `.gitkeep` placeholders where Git would otherwise omit empty directories; added decisions, analysis, logs, wiki, and deferred tasks.
 - Added canonical `global/`, templates, maintenance/context rules, and structural-upgrade guidance. Mother link is `.ai/global -> ../global` and is tracked as ordinary repository content.
 - Implemented Python `plan`, `install`, `repair-link`, and read-only mother-link validation commands. Preflight blocks existing agent context and destination conflicts before writes; installation has rollback coverage and writes source provenance without local absolute paths.
 - Added Python-free Bash and PowerShell copy-only bootstrap paths. They copy consumer `AGENTS.md` and create standard directories for clean projects, refuse common context signals, and do not claim migration/provenance/global-link functionality.

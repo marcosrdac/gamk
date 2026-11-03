@@ -29,7 +29,7 @@ flowchart LR
         L["logs/"]
         K["wiki/"]
         D["decisions/"]
-        I["investigations/"]
+        I["analyses/"]
         F["forms/"]
         P["workflows/"]
         S["skills/"]
@@ -163,7 +163,7 @@ The installed `AGENTS.md` gives the agent the startup contract. In broad terms, 
 
 1. discover the project's applicable rules, skills, and workflows;
 2. inspect `.ai/work/doing/` before starting new work;
-3. preserve continuity in tasks, logs, wiki, decisions, investigations, and forms;
+3. preserve continuity in tasks, logs, wiki, decisions, analyses, and forms;
 4. follow the project's instructions before optional global defaults;
 5. ask before consequential migrations or destructive changes;
 6. close completed tasks and clean temporary worktrees safely.
@@ -174,7 +174,7 @@ The directories have distinct jobs:
 - `logs/` is the chronological project journal;
 - `wiki/` is the current, consolidated project knowledge;
 - `decisions/` stores durable commitments and trade-offs;
-- `investigations/` stores substantial research with evidence and conclusions;
+- `analyses/` stores substantial research with evidence and conclusions;
 - `forms/` stores structured, asynchronous user decisions;
 - `global/` is optional shared context, either a directory or local symlink;
 - `workflows/` stores repeatable procedures;
@@ -182,7 +182,7 @@ The directories have distinct jobs:
 - `rules/` contains mandatory context-specific behavior;
 - `templates/` contains reusable document structures.
 
-This division prevents a chat transcript, a task queue, current knowledge, a permanent decision, and a one-off investigation from becoming one unsearchable pile.
+This division prevents a chat transcript, a task queue, current knowledge, a permanent decision, and a one-off analysis from becoming one unsearchable pile.
 
 ## Safety and migration model
 
@@ -243,7 +243,7 @@ The source manifest at `global/manifest.json` identifies the GAMK source and str
 ```json
 {
   "format": "gamk-source",
-  "schema_version": 1,
+  "schema_version": 2,
   "repository_name": "gamk"
 }
 ```
@@ -253,7 +253,7 @@ A full or local consumer receives `.ai/global-manifest.json`:
 ```json
 {
   "format": "gamk-consumer",
-  "schema_version": 1,
+  "schema_version": 2,
   "source_url": null,
   "base_commit": "<full Git commit>",
   "installation_mode": "full"
@@ -261,6 +261,8 @@ A full or local consumer receives `.ai/global-manifest.json`:
 ```
 
 The consumer manifest records a credential-free source URL when available, the full source commit used for installation, the structural schema, and the installation mode. It never records the machine-specific absolute path stored in `.ai/global`.
+
+Schema 2 uses `analyses/` for the research area. Existing consumer projects are not renamed automatically; their local state remains untouched until an explicit, user-approved migration.
 
 GAMK still reads the previous `git-ai-global-source`, `git-ai-global-consumer`, and `git-ai-global` identifiers so existing installations are not made unreadable by the public rename. New installations write GAMK identifiers.
 
