@@ -22,12 +22,23 @@ GAMK is the kit that makes this possible in another repository. It provides the 
 ```mermaid
 flowchart TD
     A["AGENTS.md"] --> M[".ai/"]
-    M --> W["work/"] --> L["logs/"] --> D["decisions/"] --> K["wiki/"] --> I["investigations/"] --> F["forms/"] --> P["workflows/"] --> S["skills/"] --> R["rules/"] --> T["templates/"]
-    T -.-> G["global/"]
+    M --> W["work/"]
+    M --> L["logs/"]
+    M --> D["decisions/"]
+    M --> K["wiki/"]
+    M --> I["investigations/"]
+    M --> F["forms/"]
+    M --> P["workflows/"]
+    M --> S["skills/"]
+    M --> R["rules/"]
+    M --> T["templates/"]
+    M -.-> G["global/"]
+
+    W ~~~ L ~~~ D ~~~ K ~~~ I ~~~ F ~~~ P ~~~ S ~~~ R ~~~ T ~~~ G
     style G fill:transparent,stroke:#666,stroke-dasharray: 5 5
 ```
 
-The solid path follows the memory map in `AGENTS.md`. The dashed `global/` is optional shared context linked through `.ai/global`.
+The arrows from `.ai/` point to each memory area. The dashed `global/` is optional shared context linked through `.ai/global`.
 
 The important shift is that the agent does not begin with an abstract “memory system”. It begins with `AGENTS.md`, then follows the project's own map to the task state, history, decisions, knowledge, rules, capabilities, and reusable structures. GAMK does not force a cloud service, a model vendor, or a particular editor; the memory remains inspectable files in the project.
 
