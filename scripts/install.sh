@@ -6,7 +6,7 @@ if [[ $# -eq 0 ]]; then
     set -- plan
 elif [[ "$1" == "init-mother" || "$1" == "plan-mother" ]]; then
     :
-elif [[ "$1" != "plan" && "$1" != "install" && "$1" != "repair-link" && "$1" != "-h" && "$1" != "--help" ]]; then
+elif [[ "$1" != "plan" && "$1" != "status" && "$1" != "install" && "$1" != "repair-link" && "$1" != "-h" && "$1" != "--help" ]]; then
     set -- plan "$@"
 fi
 

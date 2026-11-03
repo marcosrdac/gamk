@@ -24,6 +24,9 @@ This intentionally copies only the consumer `AGENTS.md` and creates the standard
 # Read-only plan, prints a contextual migration prompt and source commit. No command defaults to writing.
 scripts/install.sh plan /path/to/project
 
+# Read-only provenance/source check; returns nonzero when attention is needed.
+scripts/install.sh status /path/to/project
+
 # Installs only when preflight detects no existing agent/context signals.
 scripts/install.sh install /path/to/new-project
 
@@ -44,6 +47,7 @@ PowerShell equivalent:
 
 ```powershell
 ./scripts/install.ps1 plan 'C:\path\to\project'
+./scripts/install.ps1 status 'C:\path\to\project'
 ./scripts/install.ps1 install 'C:\path\to\new-project'
 ./scripts/install.ps1 repair-link 'C:\path\to\project'
 ```
@@ -54,9 +58,11 @@ The Linux/NixOS pre-validation can be rerun with `nix shell nixpkgs#python3 --co
 
 `plan` never writes to the target. `install` runs full preflight before any target write; if it detects existing agent instructions/configuration, an existing `.ai/`, or occupied destinations, it exits nonzero, lists the evidence, and prints how to request planning. It does not attempt semantic migration. The target project's agent should read the existing and new instructions, prepare a migration with the user, preserve legacy context, and integrate an existing `AGENTS.md`. Rerun `install` only after that work is done; preflight always runs again. `--yes` never bypasses preflight.
 
+`status` is read-only. It compares `.ai/global-manifest.json` with the source manifest and Git checkout reachable through `.ai/global`, checking the structural schema, recorded source commit, commit ancestry, and source URL when available. A manifest from `--mode local` records that no personal global link is expected, so status reports that normal mode and skips checkout comparison. It does not inspect or modify consumer files beyond those provenance/link checks. It returns success for a current or not-yet-installed consumer, and nonzero with an actionable finding when the link, manifest, schema, or source identity needs attention.
+
 If no relevant signals exist, the default install creates the structure, root `AGENTS.md`, provenance manifest, and a local absolute symlink `.ai/global` to this checkout's `global/`. `--mode local`/`--local` omits that personal link; pass the exact `.ai/global` destination to install only the link. Existing `.ai/global` is never replaced by `install`; use `repair-link` after reviewing it. Repair refuses to replace a real file/directory and repairs broken or stale symlinks.
 
-The consumer manifest `.ai/git-ai-global.json` records the source Git URL (if configured), source commit, and structure schema version. Embedded URL credentials are stripped; prefer a credential-free Git URL. The manifest contains no machine-specific absolute path. The absolute target is necessarily stored in the local symlink itself. The installer does **not** edit `.gitignore`, `.git/info/exclude`, or the Git index. Before committing consumer changes, the user must ignore `.ai/global` locally or through their own project policy.
+The consumer manifest `.ai/global-manifest.json` records the installation mode, source Git URL (if configured), source commit, and structure schema version. Embedded URL credentials are stripped; prefer a credential-free Git URL. The manifest contains no machine-specific absolute path. The absolute target is necessarily stored in the local symlink itself. The installer does **not** edit `.gitignore`, `.git/info/exclude`, or the Git index. Before committing consumer changes, the user must ignore `.ai/global` locally or through their own project policy.
 
 This mother repository uses a tracked relative link: `.ai/global -> ../global`. `plan-mother` and the legacy-named `init-mother` only verify it; neither creates nor modifies the source checkout. If missing or wrong, inspect and repair it manually, then stage it as ordinary repository content. The installer performs no Git operations. Never use consumer `install` on this mother repository; the preflight blocks it.
 
@@ -86,4 +92,4 @@ nix shell nixpkgs#python3 --command python3 -m unittest discover -s scripts -p '
 ## Deferred investigations
 
 - Study Git submodule distribution as an alternative to local absolute consumer links: `.ai/work/next/010_20261102_2005_study-submodule-global-source.md`.
-- Design a status/warning mechanism for source-versus-installed divergence: `.ai/work/next/020_20261102_2005_source-divergence-status.md`.
+- Design a status/warning mechanism for source-versus-installed divergence: `.ai/work/doing/010_20261102_2005_source-divergence-status.md`.

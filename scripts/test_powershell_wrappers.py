@@ -119,12 +119,16 @@ def main() -> int:
         link = install_target / ".ai" / "global"
         if not (install_target / "AGENTS.md").is_file():
             raise AssertionError("full install did not copy AGENTS.md")
-        if not (install_target / ".ai" / "git-ai-global.json").is_file():
+        if not (install_target / ".ai" / "global-manifest.json").is_file():
             raise AssertionError("full install did not write provenance")
         if not link.is_symlink() or link.resolve() != (REPOSITORY / "global").resolve():
             raise AssertionError("full install did not create the expected Linux link")
         assert_contains(installed, "Installation complete")
         print("install.ps1 full install on Linux filesystem: OK")
+
+        status = run_pwsh("-File", install_wrapper, "status", install_target)
+        assert_contains(status, "Status: current")
+        print("install.ps1 status: OK")
 
         blocked_target = workspace / "blocked target"
         blocked_target.mkdir()
@@ -143,7 +147,7 @@ def main() -> int:
             raise AssertionError("copy install did not copy AGENTS.md")
         if not (copy_target / ".ai" / "work" / "doing").is_dir():
             raise AssertionError("copy install did not create the work directory")
-        if (copy_target / ".ai" / "git-ai-global.json").exists():
+        if (copy_target / ".ai" / "global-manifest.json").exists():
             raise AssertionError("copy install unexpectedly wrote provenance")
         assert_contains(copied, "Files copied")
         print("copy-install.ps1 clean install: OK")

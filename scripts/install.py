@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan, install, and repair git-ai-global context in consumer projects."""
+"""Plan, inspect, install, and repair git-ai-global context in consumer projects."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 
 SCHEMA_VERSION = 1
-MANIFEST = Path(".ai/git-ai-global.json")
+MANIFEST = Path(".ai/global-manifest.json")
 PROJECT_DIRECTORIES = (
     "decisions", "forms/creating", "forms/pending", "forms/answered",
     "investigations/doing", "investigations/closed/done", "investigations/closed/wontdo",
@@ -116,6 +116,58 @@ def source_manifest(source: Path) -> dict[str, object]:
             or not isinstance(data.get("schema_version"), int)):
         raise RuntimeError(f"Unrecognized source manifest: {path}")
     return data
+
+
+def source_manifest_from_global(global_dir: Path) -> dict[str, object]:
+    path = global_dir / "manifest.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise RuntimeError(f"Invalid or missing global source manifest {path}: {error}") from error
+    if (not isinstance(data, dict) or data.get("format") != "git-ai-global-source"
+            or data.get("repository_name") != "git-ai-global"
+            or not isinstance(data.get("schema_version"), int)):
+        raise RuntimeError(f"Unrecognized global source manifest: {path}")
+    return data
+
+
+def consumer_manifest(path: Path) -> dict[str, object]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise RuntimeError(f"Invalid consumer manifest {path}: {error}") from error
+    if (not isinstance(data, dict) or data.get("format") != "git-ai-global-consumer"
+            or not isinstance(data.get("schema_version"), int)
+            or not isinstance(data.get("base_commit"), str)
+            or not data.get("base_commit")
+            or not isinstance(data.get("source_url"), (str, type(None)))):
+        raise RuntimeError(f"Unrecognized consumer manifest: {path}")
+    installation_mode = data.get("installation_mode", "full")
+    if not isinstance(installation_mode, str) or installation_mode not in ("full", "local"):
+        raise RuntimeError(f"Unrecognized consumer installation mode: {path}")
+    return data
+
+
+def source_checkout_for_global(global_dir: Path) -> Optional[Path]:
+    try:
+        resolved_global = global_dir.resolve(strict=True)
+        candidate = git_root(resolved_global)
+        if candidate is None:
+            return None
+        if (candidate / "global/manifest.json").resolve(strict=True) != (resolved_global / "manifest.json").resolve(strict=True):
+            return None
+        return candidate
+    except OSError:
+        return None
+
+
+def source_commit_is_ancestor(source: Path, base_commit: str, current_commit: str) -> Optional[bool]:
+    result = run_git(("-C", str(source), "merge-base", "--is-ancestor", base_commit, current_commit), source)
+    if result.returncode == 0:
+        return True
+    if result.returncode == 1:
+        return False
+    return None
 
 
 def template_destinations(source: Path) -> tuple[Path, ...]:
@@ -294,6 +346,116 @@ def print_blocked(target: Target, result: Preflight) -> None:
     print(f"  {Path(__file__).resolve()} plan {target.root}", file=sys.stderr)
 
 
+def status(target: Target) -> int:
+    if not target.root.is_dir():
+        raise RuntimeError(f"Target project directory does not exist: {target.root}")
+    if target.root.resolve() == source_root().resolve():
+        print("Status: mother repository")
+        print("Use plan-mother or init-mother to inspect the tracked source link.")
+        return 0
+
+    manifest_path = target.root / MANIFEST
+    link = target.global_link
+    if not path_exists(manifest_path):
+        if path_exists(link):
+            print("Status: incomplete")
+            print(f"Consumer manifest is missing: {manifest_path}")
+            print("No files were changed.")
+            return 1
+        print("Status: not installed")
+        print(f"Consumer manifest is absent: {manifest_path}")
+        return 0
+
+    try:
+        consumer = consumer_manifest(manifest_path)
+    except RuntimeError as error:
+        print("Status: invalid")
+        print(f"- {error}")
+        print("No files were changed.")
+        return 1
+
+    base_commit = str(consumer["base_commit"])
+    consumer_schema = int(consumer["schema_version"])
+    installation_mode = str(consumer.get("installation_mode", "full"))
+    findings: list[str] = []
+    source_checked = False
+    source_checkout: Optional[Path] = None
+    current_commit: Optional[str] = None
+    current_url: Optional[str] = None
+    source_schema: Optional[int] = None
+
+    print(f"Consumer: {target.root}")
+    print(f"Manifest: {manifest_path}")
+    print(f"Installation mode: {installation_mode}")
+    print(f"Recorded source commit: {base_commit}")
+    print(f"Recorded schema: {consumer_schema}")
+
+    if not path_exists(link):
+        if installation_mode == "full":
+            findings.append(f"global link is missing: {link}")
+        else:
+            print("Global link: not configured (local mode)")
+    else:
+        source_checked = True
+        try:
+            global_dir = link.resolve(strict=True) if link.is_symlink() else link
+        except OSError:
+            global_dir = None
+            findings.append(f"global link is broken or unreadable: {link}")
+        if global_dir is not None and not global_dir.is_dir():
+            findings.append(f"global source is not a directory: {global_dir}")
+        elif global_dir is not None:
+            try:
+                source_data = source_manifest_from_global(global_dir)
+                source_schema = int(source_data["schema_version"])
+                print(f"Available source schema: {source_schema}")
+                if source_schema != consumer_schema:
+                    findings.append(
+                        f"structural schema differs (installed {consumer_schema}, available {source_schema})"
+                    )
+            except RuntimeError as error:
+                findings.append(str(error))
+            source_checkout = source_checkout_for_global(global_dir)
+            if source_checkout is None:
+                findings.append("source checkout identity is unavailable; commit comparison could not be performed")
+            else:
+                try:
+                    current_commit, current_url = source_identity(source_checkout)
+                    print(f"Available source commit: {current_commit}")
+                except RuntimeError as error:
+                    findings.append(str(error))
+
+    if current_commit is not None:
+        if current_commit != base_commit:
+            relation = source_commit_is_ancestor(source_checkout, base_commit, current_commit) if source_checkout else None
+            if relation is True:
+                findings.append("global source has advanced since this consumer was installed")
+            elif relation is False:
+                findings.append("recorded source commit differs and is not an ancestor of the available source")
+            else:
+                findings.append("recorded source commit differs; ancestry could not be determined")
+    if source_checked:
+        recorded_url = consumer.get("source_url")
+        if current_url is not None and recorded_url != current_url:
+            findings.append("recorded source URL differs from the available source URL")
+        elif isinstance(recorded_url, str) and current_url is None:
+            findings.append("recorded source URL cannot be compared because the available source has no remote URL")
+
+    if findings:
+        print("Status: attention required")
+        for finding in findings:
+            print(f"- {finding}")
+        print("No files were changed. Review the structural-upgrade skill before making changes.")
+        return 1
+
+    print("Status: current")
+    if installation_mode == "local" and not path_exists(link):
+        print("Local mode is configured; source checkout comparison was skipped because no global link is expected.")
+    else:
+        print("No provenance or source-identity divergence was detected; consumer files were not inspected or changed.")
+    return 0
+
+
 def create_link(link: Path, destination: Path) -> None:
     if os.name != "nt":
         link.symlink_to(destination, target_is_directory=True)
@@ -408,6 +570,7 @@ def install(target: Target, result: Preflight, mode: str) -> int:
             "schema_version": SCHEMA_VERSION,
             "source_url": result.source_url,
             "base_commit": result.source_commit,
+            "installation_mode": mode,
         }
         manifest_path = target.root / MANIFEST
         if not path_exists(manifest_path.parent):
@@ -501,7 +664,7 @@ def plan_mother() -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    for command in ("plan", "install", "repair-link"):
+    for command in ("plan", "status", "install", "repair-link"):
         child = sub.add_parser(command)
         child.add_argument("target", nargs="?", type=Path, help="project root, .ai directory, or exact .ai/global path")
         if command == "install":
@@ -522,6 +685,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if args.command == "init-mother":
             return init_mother()
         target = resolve_target(args.target, Path.cwd())
+        if args.command == "status":
+            return status(target)
         mode = "full"
         if args.command == "install":
             mode = "local" if args.local else args.mode

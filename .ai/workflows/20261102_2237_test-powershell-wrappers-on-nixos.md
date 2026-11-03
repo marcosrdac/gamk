@@ -19,6 +19,7 @@ The probe checks:
 - parsing both `.ps1` wrappers;
 - `install.ps1 plan` with a target path containing spaces and no writes;
 - full `install.ps1` argument forwarding and Linux symlink creation;
+- read-only `install.ps1 status` after a successful install;
 - blocked full installation with no partial writes;
 - clean and blocked `copy-install.ps1` behavior;
 - read-only `plan-mother` forwarding.

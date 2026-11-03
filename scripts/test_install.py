@@ -204,10 +204,11 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue((root / "AGENTS.md").is_file())
         self.assertTrue((root / ".ai" / "work" / "doing").is_dir())
         self.assertEqual((root / ".ai" / "global").resolve(), REPOSITORY / "global")
-        manifest = json.loads((root / ".ai" / "git-ai-global.json").read_text())
+        manifest = json.loads((root / ".ai" / "global-manifest.json").read_text())
         self.assertEqual(manifest["format"], "git-ai-global-consumer")
         self.assertEqual(manifest["base_commit"], install.source_identity(REPOSITORY)[0])
         self.assertEqual(manifest["schema_version"], install.SCHEMA_VERSION)
+        self.assertEqual(manifest["installation_mode"], "full")
         self.assertNotIn(str(REPOSITORY), json.dumps(manifest))
         self.assertIsNone(manifest["source_url"])
         self.assertFalse((root / ".gitignore").exists())
@@ -217,12 +218,142 @@ class InstallerTests(unittest.TestCase):
         )
         self.assertIn("ignore `.ai/global`", result.stdout)
 
+    def test_status_reports_not_installed_without_writing(self):
+        root = self.project()
+        before = self.snapshot(root)
+
+        result = self.invoke_cli("status", root)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Status: not installed", result.stdout)
+        self.assertEqual(self.snapshot(root), before)
+
+    def test_status_reports_current_after_install_without_writing(self):
+        root = self.project()
+        installed = self.invoke("install", root)
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        before = self.snapshot(root)
+        manifest_before = (root / install.MANIFEST).read_text(encoding="utf-8")
+
+        result = self.invoke_cli("status", root)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Status: current", result.stdout)
+        self.assertEqual(self.snapshot(root), before)
+        self.assertEqual((root / install.MANIFEST).read_text(encoding="utf-8"), manifest_before)
+
+    def test_status_reports_advanced_source_without_writing(self):
+        root = self.project()
+        installed = self.invoke("install", root)
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        manifest_path = root / install.MANIFEST
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        parent = subprocess.run(
+            ["git", "-C", str(REPOSITORY), "rev-parse", "HEAD^"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        manifest["base_commit"] = parent
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        before = self.snapshot(root)
+        manifest_before = manifest_path.read_text(encoding="utf-8")
+
+        result = self.invoke_cli("status", root)
+
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn("global source has advanced", result.stdout)
+        self.assertEqual(self.snapshot(root), before)
+        self.assertEqual(manifest_path.read_text(encoding="utf-8"), manifest_before)
+
+    def test_status_reports_schema_mismatch_without_writing(self):
+        root = self.project()
+        installed = self.invoke("install", root)
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        manifest_path = root / install.MANIFEST
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["schema_version"] = install.SCHEMA_VERSION + 1
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        before = self.snapshot(root)
+
+        result = self.invoke_cli("status", root)
+
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn("structural schema differs", result.stdout)
+        self.assertEqual(self.snapshot(root), before)
+
+    def test_status_reports_missing_global_link_without_writing(self):
+        root = self.project()
+        installed = self.invoke("install", root)
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        link = root / ".ai" / "global"
+        link.unlink()
+        before = self.snapshot(root)
+
+        result = self.invoke_cli("status", root)
+
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn("global link is missing", result.stdout)
+        self.assertEqual(self.snapshot(root), before)
+
+    def test_status_accepts_local_mode_without_global_link(self):
+        root = self.project()
+        installed = self.invoke_cli("install", root, "--mode", "local")
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        manifest = json.loads((root / install.MANIFEST).read_text(encoding="utf-8"))
+        self.assertEqual(manifest["installation_mode"], "local")
+        self.assertFalse((root / ".ai" / "global").exists())
+        before = self.snapshot(root)
+
+        result = self.invoke_cli("status", root)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Status: current", result.stdout)
+        self.assertIn("local mode", result.stdout)
+        self.assertEqual(self.snapshot(root), before)
+
+    def test_status_reports_disconnected_global_source_without_writing(self):
+        root = self.project()
+        installed = self.invoke_cli("install", root, "--mode", "local")
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        copied_global = self.workspace / "global-copy"
+        shutil.copytree(REPOSITORY / "global", copied_global)
+        link = root / ".ai" / "global"
+        link.symlink_to(copied_global, target_is_directory=True)
+        before = self.snapshot(root)
+
+        result = self.invoke_cli("status", root)
+
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn("source checkout identity is unavailable", result.stdout)
+        self.assertEqual(self.snapshot(root), before)
+
+    def test_status_is_forwarded_by_shell_wrapper(self):
+        root = self.project()
+        installed = subprocess.run(
+            ["bash", str(REPOSITORY / "scripts" / "install.sh"), "install", str(root)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+
+        result = subprocess.run(
+            ["bash", str(REPOSITORY / "scripts" / "install.sh"), "status", str(root)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Status: current", result.stdout)
+
     def test_local_mode_does_not_create_global_link(self):
         root = self.project()
         result = self.invoke_cli("install", root, "--mode", "local")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse((root / ".ai" / "global").exists())
-        self.assertTrue((root / ".ai" / "git-ai-global.json").exists())
+        self.assertTrue((root / ".ai" / "global-manifest.json").exists())
 
     def test_manifest_records_source_url_when_source_has_origin(self):
         root = self.project()
@@ -248,7 +379,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(link.resolve(), REPOSITORY / "global")
         self.assertFalse((root / "AGENTS.md").exists())
-        self.assertFalse((root / ".ai" / "git-ai-global.json").exists())
+        self.assertFalse((root / ".ai" / "global-manifest.json").exists())
 
     def test_global_link_install_is_idempotent_when_link_already_matches(self):
         root = self.project()
@@ -326,9 +457,9 @@ class InstallerTests(unittest.TestCase):
 
     def test_preflight_detects_manifest_directory_collision(self):
         root = self.project()
-        (root / ".ai" / "git-ai-global.json").mkdir(parents=True)
+        (root / ".ai" / "global-manifest.json").mkdir(parents=True)
         result = install.preflight(install.Target(root, root / ".ai"))
-        self.assertTrue(any(signal.path == root / ".ai" / "git-ai-global.json" for signal in result.signals))
+        self.assertTrue(any(signal.path == root / ".ai" / "global-manifest.json" for signal in result.signals))
 
     def test_repair_link_preflight_does_not_block_on_existing_project_context(self):
         root = self.project()
@@ -403,7 +534,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((root / ".ai" / "global").resolve(), REPOSITORY / "global")
 
     def test_local_mode_blocks_existing_agents_and_manifest_destinations(self):
-        for relative in ("AGENTS.md", ".ai/git-ai-global.json"):
+        for relative in ("AGENTS.md", ".ai/global-manifest.json"):
             with self.subTest(relative=relative):
                 root = self.project(relative.replace("/", "_"))
                 path = root / relative
@@ -436,7 +567,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(copied.returncode, 0, copied.stderr)
         self.assertTrue((root / "AGENTS.md").is_file())
         self.assertTrue((root / ".ai" / "work" / "doing").is_dir())
-        self.assertFalse((root / ".ai" / "git-ai-global.json").exists())
+        self.assertFalse((root / ".ai" / "global-manifest.json").exists())
 
         other = self.project("copy-conflict")
         (other / "AGENTS.md").write_text("keep\n")

@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('plan', 'install', 'repair-link', 'plan-mother', 'init-mother')]
+    [ValidateSet('plan', 'status', 'install', 'repair-link', 'plan-mother', 'init-mother')]
     [string] $Command = 'plan',
     [Parameter(Position = 1)]
     [string] $Target,
