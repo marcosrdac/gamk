@@ -2,7 +2,7 @@
 
 ## Category status
 
-GAMK maintains this catalog. `empty` means the category currently contains no reusable context beyond its directory placeholder.
+`empty` means the category contains no reusable context. Do not read a category marked `empty`.
 
 | Category | Status | Use when relevant |
 | --- | --- | --- |
@@ -11,4 +11,4 @@ GAMK maintains this catalog. `empty` means the category currently contains no re
 | `skills/` | `empty` | Reusable specialized procedures |
 | `hosts/` | `empty` | Machine-specific facts; never credentials |
 
-Maintenance: GAMK must update the category status and usage descriptions whenever adding, removing, or renaming discoverable content.
+Keep this catalog current when category contents or usage change.

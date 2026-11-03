@@ -116,6 +116,9 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("must not be required for collaborators", text)
         global_index = (REPOSITORY / "global" / "INDEX.md").read_text(encoding="utf-8")
         self.assertIn("## Category status", global_index)
+        self.assertIn("Do not read a category marked `empty`", global_index)
+        self.assertIn("Keep this catalog current", global_index)
+        self.assertNotIn("GAMK", global_index)
         for redundant_guidance in (
             "Read this index first",
             "Project-local instructions take precedence",
