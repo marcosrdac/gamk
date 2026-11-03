@@ -116,6 +116,12 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("must not be required for collaborators", text)
         global_index = (REPOSITORY / "global" / "INDEX.md").read_text(encoding="utf-8")
         self.assertIn("## Category status", global_index)
+        self.assertIn("Read this index first", global_index)
+        self.assertIn("Do not scan categories marked `empty`", global_index)
+        self.assertIn("Follow any `Always Read` entries when present", global_index)
+        for distribution_term in ("consumer", "symlink", "linked", "copied"):
+            with self.subTest(distribution_term=distribution_term):
+                self.assertNotIn(distribution_term, global_index.lower())
         for category in ("rules", "workflows", "skills", "hosts"):
             with self.subTest(index_category=category):
                 self.assertIn(f"| `{category}/` | `empty` |", global_index)

@@ -1,8 +1,8 @@
-# Personal Global Context Index
+# Global Context Index
 
-This directory is the canonical source of optional, personal, reusable agent context. Consumer projects may link `.ai/global/` to this checkout locally; the consumer link is not shared through Git. This repository's own `.ai/global` is a tracked relative symlink to `../global`.
+Read this index first. Use it to decide whether global context is relevant to the current task. Do not scan categories marked `empty`; when a category is available, read only the files relevant to the task.
 
-Personal global content must not contain consumer-project facts, repository-specific maintenance rules, or credentials. Consumer projects remain independently usable without a global link. The installed `AGENTS.md` already defines how to discover this optional context; this index only maps what is available.
+Project-local instructions take precedence. Do not use global context to override explicit task or user instructions. Keep project-specific facts, repository maintenance rules, and credentials out of global context.
 
 ## Category status
 
@@ -21,5 +21,6 @@ GAMK maintains this catalog. `empty` means the category currently contains no re
 - `workflows/` — repeatable operational procedures.
 - `skills/` — reusable procedures, including deliberate structural upgrades; inspect relevant skill content when the task calls for it.
 - `hosts/` — machine-specific facts; never credentials.
+- Follow any `Always Read` entries when present.
 
-Update the category status and this index's loading map whenever adding, removing, or renaming discoverable content.
+Maintenance: GAMK must update the category status and this loading map whenever adding, removing, or renaming discoverable content.
