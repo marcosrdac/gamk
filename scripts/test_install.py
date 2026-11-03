@@ -206,7 +206,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((root / ".ai" / "global").resolve(), REPOSITORY / "global")
         manifest = json.loads((root / ".ai" / "git-ai-global.json").read_text())
         self.assertEqual(manifest["format"], "git-ai-global-consumer")
-        self.assertEqual(manifest["base_commit"], "40c317c997ecf6ca4bdc86155945c1e890ef8f4d")
+        self.assertEqual(manifest["base_commit"], install.source_identity(REPOSITORY)[0])
         self.assertEqual(manifest["schema_version"], install.SCHEMA_VERSION)
         self.assertNotIn(str(REPOSITORY), json.dumps(manifest))
         self.assertIsNone(manifest["source_url"])
