@@ -116,9 +116,14 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("must not be required for collaborators", text)
         global_index = (REPOSITORY / "global" / "INDEX.md").read_text(encoding="utf-8")
         self.assertIn("## Category status", global_index)
-        self.assertIn("Read this index first", global_index)
-        self.assertIn("Do not scan categories marked `empty`", global_index)
-        self.assertIn("Follow any `Always Read` entries when present", global_index)
+        for redundant_guidance in (
+            "Read this index first",
+            "Project-local instructions take precedence",
+            "explicit task or user instructions",
+            "## Load When Relevant",
+        ):
+            with self.subTest(redundant_guidance=redundant_guidance):
+                self.assertNotIn(redundant_guidance, global_index)
         for distribution_term in ("consumer", "symlink", "linked", "copied"):
             with self.subTest(distribution_term=distribution_term):
                 self.assertNotIn(distribution_term, global_index.lower())
