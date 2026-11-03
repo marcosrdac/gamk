@@ -162,11 +162,12 @@ The consumer's `.ai/global` link contains a machine-specific path and should nor
 The installed `AGENTS.md` gives the agent the startup contract. In broad terms, the agent should:
 
 1. discover the project's applicable rules, then follow relevant workflows and consult useful skills;
-2. inspect `.ai/work/doing/` before starting new work;
-3. preserve continuity in tasks, logs, wiki, analyses, decisions, and forms;
-4. follow the project's instructions before optional global defaults;
-5. ask before consequential migrations or destructive changes;
-6. close completed tasks and clean temporary worktrees safely.
+2. attempt to read `.ai/global/INDEX.md` directly, then load only relevant non-empty global categories;
+3. inspect `.ai/work/doing/` before starting new work;
+4. preserve continuity in tasks, logs, wiki, analyses, decisions, and forms;
+5. follow the project's instructions before optional global defaults;
+6. ask before consequential migrations or destructive changes;
+7. close completed tasks and clean temporary worktrees safely.
 
 The directories have distinct jobs:
 

@@ -110,11 +110,20 @@ class InstallerTests(unittest.TestCase):
 
     def test_consumer_agents_describe_global_directory_and_symlink_loading(self):
         text = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
-        self.assertIn("as a directory or symlink", text)
-        self.assertIn("Follow any “Always Read” instructions there", text)
-        self.assertIn("applicable mandatory rules", text)
+        self.assertIn("attempt to read `.ai/global/INDEX.md` directly", text)
+        self.assertIn("do not first test for the path or scan other global directories", text)
+        self.assertIn("follow its “Always Read” entries when present", text)
         self.assertIn("must not be required for collaborators", text)
         global_index = (REPOSITORY / "global" / "INDEX.md").read_text(encoding="utf-8")
+        self.assertIn("## Category status", global_index)
+        for category in ("rules", "workflows", "skills", "hosts"):
+            with self.subTest(index_category=category):
+                self.assertIn(f"| `{category}/` | `empty` |", global_index)
+                actual = [
+                    path for path in (REPOSITORY / "global" / category).rglob("*")
+                    if path.is_file() and path.name != ".gitkeep"
+                ]
+                self.assertFalse(actual, f"global index says {category}/ is empty, but found {actual}")
         self.assertNotIn("## Always Read", global_index)
         self.assertNotIn("system-maintenance.md", global_index)
         self.assertNotIn("context-loading.md", global_index)

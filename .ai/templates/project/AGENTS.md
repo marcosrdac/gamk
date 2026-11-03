@@ -67,7 +67,7 @@ Never remove the current worktree, a dirty worktree, or an unmerged branch. Neve
 
 **Project instructions:** At startup, discover applicable project rules in `.ai/rules/` and read each rule relevant to the task before acting. Follow relevant workflows in `.ai/workflows/`, then consult project skills in `.ai/skills/` when they can improve the work. These project-local instructions are distinct from optional shared global context.
 
-**Optional shared context:** If `.ai/global/` exists as a directory or symlink, read its `INDEX.md` when present. Follow any “Always Read” instructions there (including applicable mandatory rules); also load relevant available `rules/`, `workflows/`, and `skills/` as indicated by the index and task. Do not assume every category exists. Global guidance is a personal default: explicit task instructions take precedence over project instructions, which take precedence over global context. If `.ai/global/` is absent, dangling, or unreadable, continue with project context; it must not be required for collaborators.
+**Optional shared context:** At startup, attempt to read `.ai/global/INDEX.md` directly. If the link, file, or contents are absent or unreadable, continue without global context; do not first test for the path or scan other global directories. Treat the index as the catalog of available categories, follow its “Always Read” entries when present, and consume only categories relevant to the task. Do not assume every category exists. Global guidance is a personal default: explicit task instructions take precedence over project instructions, which take precedence over global context. Global context must not be required for collaborators.
 
 ## 3. Work Management
 
