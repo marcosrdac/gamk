@@ -17,26 +17,68 @@ The result is an agent that can:
 
 GAMK is the kit that makes this possible in another repository. It provides the reusable memory structure, the agent instructions that explain how to use it, and safe scripts for installing that structure into a consumer project.
 
-## The value in one picture
+## The project-side view: `AGENTS.md` first
+
+The diagrams below show the same relationship in different visual languages. They are alternatives for review; the final README should keep the one that explains the model most clearly.
+
+### Option A — reading path
+
+```mermaid
+flowchart TD
+    A["AGENTS.md<br/>entrypoint and operating contract"]
+    M[".ai/<br/>project memory map"]
+    W[".ai/work/<br/>01 tasks and priorities"]
+    L[".ai/logs/<br/>02 project journal"]
+    D[".ai/decisions/<br/>03 rationale and commitments"]
+    K[".ai/wiki/<br/>04 current project knowledge"]
+    I[".ai/investigations/<br/>05 evidence and analysis"]
+    F[".ai/forms/<br/>06 structured user decisions"]
+    G[".ai/global/<br/>07 optional link to GAMK global/"]
+    P[".ai/workflows/<br/>08 repeatable procedures"]
+    S[".ai/skills/<br/>09 specialized capabilities"]
+    R[".ai/rules/<br/>10 mandatory behavior"]
+    T[".ai/templates/<br/>11 reusable structures"]
+
+    A --> M
+    M --> W --> L --> D --> K --> I --> F --> G --> P --> S --> R --> T
+```
+
+### Option B — ordered memory rail
 
 ```mermaid
 flowchart LR
-    S["GAMK source<br/>global/ + scripts/"]
-    P["plan → review → install"]
-    C["Consumer project"]
-    I["AGENTS.md<br/>operating contract"]
-    M[".ai/<br/>durable project memory"]
-    V[".ai/global-manifest.json<br/>source provenance"]
-    G[".ai/global<br/>optional local link"]
+    A["AGENTS.md<br/>start here"] --> M[".ai/<br/>project memory"]
 
-    S --> P --> C
-    C --> I
-    C --> M
-    C --> V
-    G -.->|optional local link| S
+    subgraph O["The order described by AGENTS.md"]
+        direction LR
+        W["01<br/>work"] --> L["02<br/>logs"] --> D["03<br/>decisions"] --> K["04<br/>wiki"] --> I["05<br/>investigations"] --> F["06<br/>forms"] --> G["07<br/>global"] --> P["08<br/>workflows"] --> S["09<br/>skills"] --> R["10<br/>rules"] --> T["11<br/>templates"]
+    end
+
+    M --> W
 ```
 
-GAMK does not force a cloud service, a model vendor, or a particular editor. The memory is plain files in the project, so agents and humans can inspect, review, version, migrate, and recover it.
+### Option C — responsibility map
+
+```mermaid
+flowchart TD
+    A["AGENTS.md<br/>entrypoint + operating contract"] --> M[".ai/<br/>project memory map"]
+
+    M --> W["01 · work<br/>tasks and priorities"]
+    M --> L["02 · logs<br/>project journal"]
+    M --> D["03 · decisions<br/>rationale and commitments"]
+    M --> K["04 · wiki<br/>current project knowledge"]
+    M --> I["05 · investigations<br/>evidence and analysis"]
+    M --> F["06 · forms<br/>structured user decisions"]
+    M --> G["07 · global<br/>optional link to GAMK global/"]
+    M --> P["08 · workflows<br/>repeatable procedures"]
+    M --> S["09 · skills<br/>specialized capabilities"]
+    M --> R["10 · rules<br/>mandatory behavior"]
+    M --> T["11 · templates<br/>reusable structures"]
+```
+
+All three follow the memory map presented in `AGENTS.md`. The order is a map of responsibilities, not a demand to read every file on every task: `AGENTS.md` tells the agent what to discover, and the current task determines which parts matter.
+
+The important shift is that the agent does not begin with an abstract “memory system”. It begins with `AGENTS.md`, then follows the project's own map to the task state, history, decisions, knowledge, rules, capabilities, and reusable structures. GAMK does not force a cloud service, a model vendor, or a particular editor; the memory remains inspectable files in the project.
 
 ## What GAMK gives you
 
@@ -148,13 +190,15 @@ The installed `AGENTS.md` gives the agent the startup contract. In broad terms, 
 The directories have distinct jobs:
 
 - `work/` is the execution queue: active, next, backlog, blocked, done, and abandoned work;
-- `decisions/` stores durable commitments and trade-offs;
 - `logs/` is the chronological project journal;
+- `decisions/` stores durable commitments and trade-offs;
 - `wiki/` is the current, consolidated project knowledge;
 - `investigations/` stores substantial research with evidence and conclusions;
+- `forms/` stores structured, asynchronous user decisions;
+- `global/` is optional shared context, either a directory or local symlink;
+- `workflows/` stores repeatable procedures;
+- `skills/` stores specialized approaches;
 - `rules/` contains mandatory context-specific behavior;
-- `skills/` contains specialized approaches;
-- `workflows/` contains repeatable procedures;
 - `templates/` contains reusable document structures.
 
 This division prevents a chat transcript, a task queue, a permanent decision, and a one-off investigation from becoming one unsearchable pile.
@@ -242,6 +286,31 @@ GAMK still reads the previous `git-ai-global-source`, `git-ai-global-consumer`, 
 ## Inside the GAMK repository
 
 The repository is both a reusable source and a maintained project in its own right:
+
+```mermaid
+flowchart LR
+    T["global/templates/project/AGENTS.md<br/>shared consumer instructions"]
+    X[".ai/templates/mother-AGENTS.extensions.md<br/>mother-only additions"]
+    N["scripts/generate_mother_agents.py"]
+    A["root AGENTS.md<br/>generated instruction contract"]
+    I["scripts/install.py<br/>safe installer"]
+    G["global/<br/>reusable context source"]
+    C["consumer AGENTS.md"]
+    L["consumer .ai/global<br/>local link to global/"]
+    M["consumer .ai/global-manifest.json"]
+
+    T --> N
+    X --> N
+    N -->|generates| A
+    T --> I
+    G --> I
+    I -->|copies| C
+    I -->|links| L
+    I -->|records provenance| M
+    C -.->|loads when present| L
+```
+
+GAMK creates the instruction contract and the reusable source that contract can discover. In the mother repository, `.ai/global -> ../global` is tracked; in a consumer project, `.ai/global` is a local machine-specific link. The generated `AGENTS.md` is the entrypoint, while `global/` is the reusable source layer exposed through that link when available.
 
 ```text
 gamk/
