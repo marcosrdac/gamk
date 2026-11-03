@@ -154,9 +154,31 @@ class InstallerTests(unittest.TestCase):
         text = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
         self.assertNotIn("20261102_2005_agents-parity.md", text)
         self.assertNotIn("20261102_2005_structural-upgrade.md", text)
+        self.assertNotIn("20261102_2321_finish-completed-worktree.md", text)
+        self.assertNotIn("finish-worktree.py", text)
+        self.assertNotIn("GAMK", text)
         self.assertIn("optional `.ai/global/rules/`", text)
         self.assertIn("optional `.ai/global/skills/`", text)
         self.assertNotIn("canonical source repository may maintain a local index", text)
+
+    def test_worktree_cleanup_is_shared_and_tool_independent(self):
+        text = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")
+        for shared_contract in (
+            "A dedicated worktree is temporary execution space, not permanent project inventory.",
+            "the target branch is already merged into the base branch",
+            "the target has no uncommitted or untracked files",
+            "the target's `.ai/work/doing/` has no active task files",
+            "git worktree remove .git-worktrees/<worktree-name>",
+            "git branch -d <branch>",
+            "git worktree prune",
+            "Never use `git worktree remove --force` or `git branch -D`",
+        ):
+            with self.subTest(shared_contract=shared_contract):
+                self.assertIn(shared_contract, text)
+
+        extension = (REPOSITORY / ".ai/templates/mother-AGENTS.extensions.md").read_text(encoding="utf-8")
+        self.assertNotIn("finish-completed-worktree", extension)
+        self.assertNotIn("finish-worktree.py", extension)
 
     def test_mother_agents_generator_is_deterministic_and_separates_extensions(self):
         result = self.invoke_generator()

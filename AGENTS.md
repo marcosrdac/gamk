@@ -22,9 +22,23 @@ A dedicated worktree is temporary execution space, not permanent project invento
 
 1. Close the task: move it to `work/closed/done/` or `work/closed/wontdo/`, leaving `work/doing/` empty.
 2. Verify tests and integrate the branch into the project's approved base branch.
-3. From a different clean checkout of that base branch, confirm the feature worktree has no uncommitted or untracked files.
-4. Remove the completed worktree with `git worktree remove <path>` and delete only its already-merged branch with `git branch -d <branch>`.
+3. From a different clean checkout of that base branch, confirm all of the following before cleanup:
+   - the current checkout is the approved base branch;
+   - the target is a registered worktree below `.git-worktrees/`;
+   - the target branch is already merged into the base branch;
+   - the target has no uncommitted or untracked files;
+   - the target's `.ai/work/doing/` has no active task files; and
+   - the target is not the main worktree or a detached checkout.
+4. From that base checkout, remove the completed worktree with `git worktree remove <path>` and delete only its already-merged branch with `git branch -d <branch>`.
 5. Run `git worktree prune` to clear stale administrative records.
+
+For the usual layout, the cleanup commands are:
+
+```bash
+git worktree remove .git-worktrees/<worktree-name>
+git branch -d <branch>
+git worktree prune
+```
 
 Never remove the current worktree, a dirty worktree, or an unmerged branch. Never use `git worktree remove --force` or `git branch -D` to bypass an unresolved condition. If cleanup is blocked, preserve the worktree and resolve the reported task, data, or integration issue explicitly.
 
@@ -324,7 +338,3 @@ At startup, after the shared project context map:
 ### Maintain generated agent instructions
 
 When changing the shared consumer instructions or these mother-only extensions, follow the mother-local workflow `update-agent-instructions.md`. The consumer template is the source for shared content; regenerate the root `AGENTS.md` with the provided generator. Do not hand-edit generated root content.
-
-### Finish completed worktrees
-
-After a completed feature is integrated into `main`, follow `.ai/workflows/20261102_2321_finish-completed-worktree.md`. Run its dry-run checks from `main`, then apply cleanup only when the target worktree is clean, has no active `.ai/work/doing/` task, and its branch is already merged. Never use force removal or force branch deletion to bypass an unresolved condition.
