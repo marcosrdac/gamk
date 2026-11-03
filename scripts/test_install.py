@@ -214,7 +214,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(manifest["schema_version"], install.SCHEMA_VERSION)
         self.assertEqual(manifest["installation_mode"], "full")
         self.assertNotIn(str(REPOSITORY), json.dumps(manifest))
-        self.assertIsNone(manifest["source_url"])
+        self.assertEqual(manifest["source_url"], install.source_identity(REPOSITORY)[1])
         self.assertFalse((root / ".gitignore").exists())
         self.assertEqual(
             subprocess.run(["git", "-C", str(root), "status", "--short"], capture_output=True, text=True).stdout.count(".gitignore"),

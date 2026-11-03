@@ -1,186 +1,205 @@
 # GAMK — Git Agent Memory Kit
 
-GAMK is a Git-aware kit for giving agents durable project context: instructions, memory, rules, skills, workflows, templates, provenance, and safe installation tools.
+## Give your agent a durable memory for the project
 
-It is designed for people who want an agent to understand a project over time without silently overwriting the project's existing knowledge or configuration.
+Most agents are good at solving the next problem. The expensive part is making them remember the decisions, constraints, conventions, unfinished work, and lessons that came before it.
 
-## What GAMK provides
+GAMK turns that missing memory into a project-owned, Git-tracked system of context. Instead of repeating the same explanation in every session, the agent can discover the project's instructions, decisions, logs, rules, workflows, skills, and active tasks where the project already lives.
 
-GAMK has two roles in one repository:
+The result is an agent that can:
 
-1. It is the canonical source for reusable agent context under `global/`.
-2. It is a conservative installer for adding that context to consumer projects.
+- resume work with context instead of starting from zero;
+- preserve decisions and the reasons behind them;
+- follow the project's rules consistently;
+- leave a useful trail for the next person or agent;
+- understand what is active, paused, blocked, done, or next;
+- work with the project's existing instructions instead of silently replacing them.
 
-The shared context covers the practical continuity an agent needs between sessions:
+GAMK is the kit that makes this possible in another repository. It provides the reusable memory structure, the agent instructions that explain how to use it, and safe scripts for installing that structure into a consumer project.
 
-- `AGENTS.md` instructions;
-- decisions and logs;
-- investigations and asynchronous forms;
-- mandatory rules and optional skills;
-- repeatable workflows;
-- templates for future project memory;
-- a source manifest and an installed-project manifest.
+## The value in one picture
 
-GAMK does not make a consumer project dependent on this checkout for ordinary operation. The consumer keeps its own `.ai/` structure; the optional personal global context is connected through a local link.
+```mermaid
+flowchart LR
+    S["GAMK source<br/>global/ + scripts/"]
+    P["plan → review → install"]
+    C["Consumer project"]
+    I["AGENTS.md<br/>operating contract"]
+    M[".ai/<br/>durable project memory"]
+    V[".ai/global-manifest.json<br/>source provenance"]
+    G[".ai/global<br/>optional local link"]
 
-## The mental model
-
-The source repository looks like this:
-
-```text
-gamk/
-├── global/                         # Reusable source context and consumer templates
-│   ├── templates/project/          # Consumer AGENTS.md and starter files
-│   ├── rules/                      # Shared rules
-│   ├── skills/                     # Shared skills
-│   ├── workflows/                 # Shared procedures
-│   └── manifest.json               # Source identity and schema
-├── scripts/                        # Bash, PowerShell, Python, and test entrypoints
-├── .ai/                            # GAMK's own project memory
-├── AGENTS.md                       # Generated mother-repository instructions
-└── README.md
+    S --> P --> C
+    C --> I
+    C --> M
+    C --> V
+    G -.->|optional local link| S
 ```
 
-A full consumer installation looks like this:
+GAMK does not force a cloud service, a model vendor, or a particular editor. The memory is plain files in the project, so agents and humans can inspect, review, version, migrate, and recover it.
 
-```text
-consumer-project/
-├── AGENTS.md                       # Copied shared instructions
-├── .ai/
-│   ├── global -> /path/to/gamk/global  # Local, machine-specific link
-│   ├── global-manifest.json         # Committed provenance, without an absolute path
-│   ├── work/                        # Project tasks
-│   ├── decisions/                   # Durable decisions
-│   ├── logs/                        # Project journal
-│   ├── rules/                       # Project-local mandatory rules
-│   ├── skills/                      # Project-local skills
-│   ├── workflows/                   # Project-local workflows
-│   └── ...
-└── project files
-```
+## What GAMK gives you
 
-The `.ai/global` link is deliberately local and should normally be ignored by the consumer project's Git configuration. GAMK does not edit `.gitignore`, `.git/info/exclude`, or the Git index for you.
+| Benefit | What changes in practice |
+| --- | --- |
+| Continuity | The next session reads the project's durable context instead of relying on chat history. |
+| Consistency | Shared `AGENTS.md`, rules, and workflows give agents a stable operating contract. |
+| Traceability | Decisions and logs preserve not only what changed, but why. |
+| Safer onboarding | New agents discover the same structure and task state from the repository. |
+| Controlled evolution | Template improvements produce evidence for migration; they do not overwrite project-owned context. |
+| Portability | The memory is Git-tracked Markdown and JSON, usable from any compatible agent. |
+| Low operational risk | Installation plans first, writes explicitly, and refuses to replace existing context. |
 
-## Safety model
+## Install GAMK into another project
 
-GAMK follows a read-first, explicit-write model:
+This repository is the source. A consumer project is the project that receives the memory structure.
 
-- `plan` is read-only and produces a migration prompt;
-- `status` is read-only and checks source/provenance divergence;
-- `install` performs a complete preflight before writing anything;
-- existing `AGENTS.md`, `.ai/`, agent configuration, and occupied generated destinations block installation;
-- existing project context is migrated by the target project's responsible agent, with user approval;
-- `repair-link` repairs a broken or stale symlink but refuses to replace a real file or directory;
-- no command automatically upgrades consumer structure or rewrites the provenance manifest;
-- `--yes` never bypasses the safety preflight.
-
-This is intentional. A template diff is evidence for a migration, not permission to replace project-owned context.
-
-## Quick start
-
-The commands below assume you are running them from a GAMK checkout.
-
-### A genuinely new project without Python
-
-Use the copy-only installer when the target has no existing agent instructions or `.ai/` context:
+### 1. Get GAMK
 
 ```bash
-scripts/copy-install.sh /path/to/new-project
+git clone git@github.com:marcosrdac/gamk.git
+cd gamk
 ```
 
-On Windows PowerShell:
+If you already have a checkout, use it directly. The commands below are run from that checkout.
+
+### 2. Inspect before changing anything
+
+```bash
+scripts/install.sh plan /path/to/your-project
+```
+
+`plan` is read-only. It detects existing `AGENTS.md`, `.ai/`, common agent configuration, and destination collisions. It prints the source commit, the target paths, and a migration prompt for the agent responsible for the target project.
+
+### 3. Install when the project is genuinely new
+
+```bash
+scripts/install.sh install /path/to/your-project
+```
+
+The normal installation creates:
+
+- a consumer `AGENTS.md`;
+- the standard `.ai/` memory directories;
+- `.ai/global-manifest.json` with source provenance;
+- a local `.ai/global` link to this GAMK checkout.
+
+The installer runs its complete preflight before writing. If the target already contains meaningful agent context, it stops without changing anything. In that case, give the plan to the target project's agent, review the migration with the user, preserve the existing material, and run `install` only after the approved migration is complete.
+
+### 4. Check the installed relationship
+
+```bash
+scripts/install.sh status /path/to/your-project
+```
+
+`status` is read-only. It checks whether the recorded schema and source commit still agree with the GAMK source reachable through `.ai/global`. It reports `current`, `not installed`, or `attention required`; it never performs an upgrade.
+
+### PowerShell
+
+The same flow works from PowerShell:
 
 ```powershell
-./scripts/copy-install.ps1 'C:\path\to\new-project'
+./scripts/install.ps1 plan 'C:\path\to\your-project'
+./scripts/install.ps1 install 'C:\path\to\your-project'
+./scripts/install.ps1 status 'C:\path\to\your-project'
 ```
 
-This minimal path copies the consumer `AGENTS.md` and creates the standard `.ai/` directories. It does not create a global link, a provenance manifest, or perform the full migration-aware checks.
+The wrappers can use `python3`, `python`, `py -3`, or Nix when available.
 
-### A full installation
+## Pick the right installation path
 
-Inspect first:
-
-```bash
-scripts/install.sh plan /path/to/project
-```
-
-If the target is genuinely new and the plan shows no relevant signals, install:
-
-```bash
-scripts/install.sh install /path/to/project
-```
-
-Then check the relationship between the installed project and this source checkout:
-
-```bash
-scripts/install.sh status /path/to/project
-```
-
-PowerShell uses the same commands:
-
-```powershell
-./scripts/install.ps1 plan 'C:\path\to\project'
-./scripts/install.ps1 install 'C:\path\to\project'
-./scripts/install.ps1 status 'C:\path\to\project'
-```
-
-If the project already has meaningful instructions or `.ai/` context, `install` stops without writing. Give the plan to the target project's agent, review the proposed migration with the user, preserve legacy material, and rerun `install` only after the approved migration is complete.
-
-## Installation modes
-
-| Mode | Creates shared project structure | Creates `.ai/global` | Creates `global-manifest.json` | Use when |
-| --- | --- | --- | --- | --- |
-| Copy-only | Minimal `AGENTS.md` and directories | No | No | Python-free first setup of a genuinely new project |
-| `full` | Yes | Yes | Yes | The normal installation with personal global context |
-| `local` | Yes | No | Yes | The project should use only its own `.ai/` context |
-| `global` | No | Yes | No | Only the local link should be created or repaired |
+| Path | Best for | What it does |
+| --- | --- | --- |
+| `copy-install` | A genuinely empty project without Python | Copies the basic `AGENTS.md` and creates the `.ai/` directories. No link, manifest, or full detection. |
+| `install` / `full` | The normal setup | Installs the shared structure, provenance, and local global link. |
+| `install --local` | A project that should not use personal global context | Installs the shared structure and provenance, but intentionally leaves out `.ai/global`. |
+| `install --mode global` | Link-only setup | Creates only the local `.ai/global` link. |
+| `repair-link` | A moved or broken GAMK checkout | Repairs a broken/stale symlink after review; refuses real files/directories. |
 
 Examples:
 
 ```bash
-# Full installation; this is the default.
-scripts/install.sh install /path/to/project
+# Python-free minimal bootstrap for a clean project.
+scripts/copy-install.sh /path/to/new-project
 
-# Shared structure without a personal global link.
+# Shared structure without the personal global link.
 scripts/install.sh install /path/to/project --local
 
-# Link-only installation using the exact destination.
+# Link-only installation using the exact link destination.
 scripts/install.sh install /path/to/project/.ai/global
 
-# Equivalent explicit link-only mode.
-scripts/install.sh install /path/to/project --mode global
-
-# Repair a broken or stale link after moving the GAMK checkout.
+# Repair after moving this GAMK checkout.
 scripts/install.sh repair-link /path/to/project
 ```
 
-The manifest records `installation_mode`, so `status` can distinguish an intentionally link-free local installation from a full installation whose link disappeared.
+The consumer's `.ai/global` link contains a machine-specific path and should normally be ignored by that project's Git configuration. GAMK does not edit `.gitignore`, `.git/info/exclude`, or the index for you.
+
+## How an agent uses the installed memory
+
+The installed `AGENTS.md` gives the agent the startup contract. In broad terms, the agent should:
+
+1. discover the project's applicable rules, skills, and workflows;
+2. inspect `.ai/work/doing/` before starting new work;
+3. preserve continuity in tasks, decisions, logs, investigations, and forms;
+4. follow the project's instructions before optional global defaults;
+5. ask before consequential migrations or destructive changes;
+6. close completed tasks and clean temporary worktrees safely.
+
+The directories have distinct jobs:
+
+- `work/` is the execution queue: active, next, backlog, blocked, done, and abandoned work;
+- `decisions/` stores durable commitments and trade-offs;
+- `logs/` is the chronological project journal;
+- `wiki/` is the current, consolidated project knowledge;
+- `investigations/` stores substantial research with evidence and conclusions;
+- `rules/` contains mandatory context-specific behavior;
+- `skills/` contains specialized approaches;
+- `workflows/` contains repeatable procedures;
+- `templates/` contains reusable document structures.
+
+This division prevents a chat transcript, a task queue, a permanent decision, and a one-off investigation from becoming one unsearchable pile.
+
+## Safety and migration model
+
+GAMK uses a read-first, explicit-write model:
+
+- `plan` never writes to the target;
+- `status` never writes to the target;
+- `install` completes its full preflight before its first write;
+- existing instructions, `.ai/`, known agent configuration, and occupied generated destinations block installation;
+- an existing `AGENTS.md` is never merged or replaced automatically;
+- `--yes` never bypasses preflight;
+- no command automatically upgrades a consumer or rewrites its manifest;
+- `repair-link` never replaces a real file or directory;
+- the installer does not change Git ignore rules or the index.
+
+An existing project is not a blank canvas. The target project's agent must compare old and new context, explain the consequences, ask the user about consequential changes, preserve legacy material, and rerun the installer after the approved migration.
 
 ## Command reference
 
 ### `plan [TARGET]`
 
-Read-only preflight. It reports target paths, source commit/schema, detected signals, and a migration prompt. A missing Bash subcommand defaults to `plan`.
+Read-only preflight and migration prompt. A missing subcommand in the Bash wrapper defaults to `plan`.
 
 ### `status [TARGET]`
 
-Read-only provenance check. It compares `.ai/global-manifest.json` with the source manifest and the Git checkout reachable through `.ai/global`.
+Read-only source/provenance check. It compares `.ai/global-manifest.json`, `global/manifest.json`, and the Git checkout reachable through `.ai/global`.
 
-Normal results are:
+The normal results are:
 
 - `Status: current` — the available source agrees with the recorded installation;
 - `Status: not installed` — no consumer manifest or global link exists;
-- `Status: attention required` — the manifest/link is incomplete or invalid, the schema differs, the source advanced or diverged, or source identity cannot be verified.
+- `Status: attention required` — the link or manifest is missing/invalid, the schema differs, the source advanced or diverged, or source identity cannot be checked.
 
-It exits zero for current/not-installed states and nonzero when attention is required. It does not inspect consumer file contents, repair links, or perform upgrades. Local mode without `.ai/global` is normal and skips source-checkout comparison.
+It returns zero for current/not-installed states and nonzero when attention is required. Local mode without `.ai/global` is expected and skips source-checkout comparison.
 
 ### `install [TARGET]`
 
-Writes only after the complete preflight is clear. The default is full mode. Use `--local`, `--mode local`, or `--mode global` as appropriate. `--yes` is accepted for compatibility but never overrides a block.
+Explicit write operation after a clean preflight. The default mode is `full`; use `--local`, `--mode local`, or `--mode global` as appropriate. `--yes` is compatibility-only and cannot override a block.
 
 ### `repair-link [TARGET]`
 
-Repairs a broken or stale symlink to this checkout's `global/`. It refuses to replace a real file or directory and does not touch other project context.
+Repairs a broken or stale link to this checkout's `global/` directory after review.
 
 ### `plan-mother` and `init-mother`
 
@@ -190,15 +209,11 @@ Read-only checks for GAMK's own tracked relative link:
 .ai/global -> ../global
 ```
 
-`init-mother` is retained as a legacy command name. Neither command creates or changes the source link.
+`init-mother` is retained as a legacy command name. Neither command creates or changes that source link.
 
-### Copy-only commands
+## Provenance and compatibility
 
-`copy-install.sh` and `copy-install.ps1` are intentionally smaller than the Python-backed installer. They are useful for a clean first bootstrap, not for migrating an existing project.
-
-## Provenance and manifests
-
-The source manifest at `global/manifest.json` identifies the source format and structural schema:
+The source manifest at `global/manifest.json` identifies the GAMK source and structural schema:
 
 ```json
 {
@@ -220,108 +235,118 @@ A full or local consumer receives `.ai/global-manifest.json`:
 }
 ```
 
-The consumer manifest stores the source URL when one is configured, with embedded credentials removed, and the full source commit used for installation. It never stores the machine-specific absolute path to `global/`; that path exists only in the local symlink.
+The consumer manifest records a credential-free source URL when available, the full source commit used for installation, the structural schema, and the installation mode. It never records the machine-specific absolute path stored in `.ai/global`.
 
-For compatibility, GAMK can still read the previous `git-ai-global-source`/`git-ai-global-consumer` manifest identifiers. New installations write GAMK identifiers. The user-facing project name and documentation are now GAMK, while the stable `.ai/` paths and script names remain unchanged.
+GAMK still reads the previous `git-ai-global-source`, `git-ai-global-consumer`, and `git-ai-global` identifiers so existing installations are not made unreadable by the public rename. New installations write GAMK identifiers.
 
-## Existing projects and upgrades
+## Inside the GAMK repository
 
-GAMK does not merge or overwrite a project's existing `AGENTS.md`, `.ai/` tree, or agent configuration. The safe migration sequence is:
+The repository is both a reusable source and a maintained project in its own right:
 
-1. Run `plan` against the target.
-2. Read the target's current instructions and memory.
-3. Compare the existing structure with `global/templates/project/` and the source history.
-4. Explain the benefits, costs, risks, and legacy reconstruction work.
-5. Ask the user before each consequential change.
-6. Preserve unapproved or project-specific material.
-7. Rerun `install` after the approved migration is complete.
-8. Run `status` to confirm the resulting provenance.
+```text
+gamk/
+├── global/
+│   ├── templates/project/           Shared consumer AGENTS.md and starter files
+│   ├── rules/                       Reusable rules
+│   ├── skills/                      Reusable skills
+│   ├── workflows/                  Reusable procedures
+│   ├── INDEX.md                     Global-context loading map
+│   └── manifest.json                Source identity/schema
+├── scripts/
+│   ├── install.py                   Plan/install/status/repair implementation
+│   ├── install.sh                   Bash entrypoint
+│   ├── install.ps1                  PowerShell entrypoint
+│   ├── copy-install.*               Minimal Python-free installers
+│   ├── generate_mother_agents.py    Root instruction generator
+│   └── finish-worktree.py           Safe completed-worktree cleanup
+├── .ai/
+│   ├── work/                        This repository's task state
+│   ├── decisions/                   Architectural commitments
+│   ├── logs/                        Project journal
+│   ├── wiki/                        Current architecture/operations knowledge
+│   ├── rules/                       Mother-local mandatory rules
+│   ├── skills/                      Mother-local capabilities
+│   └── workflows/                   Mother-local procedures
+├── AGENTS.md                        Generated mother instructions
+└── README.md                        This entrypoint
+```
 
-The structural-upgrade procedure is documented in [`20261102_2005_structural-upgrade.md`](.ai/skills/20261102_2005_structural-upgrade.md).
+`global/templates/project/AGENTS.md` is the canonical shared instruction source. The root `AGENTS.md` is generated from that template plus `.ai/templates/mother-AGENTS.extensions.md`; it must not be edited by hand.
 
-## Development workflow
+## How to maintain GAMK
 
-Every substantive change is tracked in `.ai/work/`. This repository uses dedicated Git worktrees under `.git-worktrees/` and integrates completed work directly into `main`; there is no `dev` branch.
+### 1. Track work before acting
 
-When changing shared instructions:
+Every substantive activity gets a task in `.ai/work/`. Keep the branch, worktree, objective, progress, next action, tests, and related decisions/logs resumable. Keep at most one active task per worktree.
 
-1. Edit `global/templates/project/AGENTS.md` for consumer-shared content.
-2. Edit `.ai/templates/mother-AGENTS.extensions.md` only for mother-repository additions.
-3. Run `python scripts/generate_mother_agents.py`.
-4. Run it again with `--check`.
-5. Verify that mother-only content did not leak into the consumer template.
+### 2. Work in an isolated worktree
 
-Do not edit the generated root `AGENTS.md` by hand.
+Create feature worktrees under `.git-worktrees/`, make the branch clean and testable, and integrate completed work directly into `main`. GAMK does not use a `dev` branch.
 
-### Closing a completed worktree
+### 3. Change shared instructions through the generator
 
-A worktree is temporary execution space, not permanent project inventory. After its task is closed and its branch is integrated into `main`, clean it up from the main checkout:
+When changing agent instructions:
+
+1. put consumer-shared text in `global/templates/project/AGENTS.md`;
+2. put mother-only text in `.ai/templates/mother-AGENTS.extensions.md`;
+3. run `python scripts/generate_mother_agents.py`;
+4. run it again with `--check`;
+5. verify that private mother content did not leak into the consumer template.
+
+### 4. Test the source and wrappers
 
 ```bash
-# Dry run: validate safety conditions and show what would be removed.
+nix shell nixpkgs#python3 --command python3 scripts/test_install.py
+nix shell nixpkgs#python3 --command python3 scripts/test_finish_worktree.py
+nix shell nixpkgs#python3 --command python3 scripts/test_powershell_wrappers.py
+nix shell nixpkgs#python3 --command python3 scripts/generate_mother_agents.py --check
+bash -n scripts/install.sh scripts/copy-install.sh
+git diff --check
+```
+
+The tests cover safe preflight, installation modes, provenance compatibility, status divergence, Bash forwarding, PowerShell parsing/forwarding, copy-only setup, the tracked source link, and worktree cleanup refusal/success paths.
+
+### 5. Close and clean the worktree
+
+A worktree is temporary execution space, not permanent project inventory. When a task is done:
+
+```text
+create → implement → test → close task → integrate into main
+       → dry-run cleanup → apply cleanup
+```
+
+From the clean `main` checkout, validate first:
+
+```bash
 nix shell nixpkgs#python3 --command python3 scripts/finish-worktree.py \
   .git-worktrees/<worktree-name>
+```
 
-# Apply: remove the clean worktree and delete its already-merged branch.
+Then apply only if it passes:
+
+```bash
 nix shell nixpkgs#python3 --command python3 scripts/finish-worktree.py \
   .git-worktrees/<worktree-name> --apply
 ```
 
-The cleanup refuses to proceed if the current checkout is not `main`, the target is dirty, the target has active files in `.ai/work/doing/`, or its branch is not merged. It never uses force removal or force branch deletion. The full procedure is [`20261102_2321_finish-completed-worktree.md`](.ai/workflows/20261102_2321_finish-completed-worktree.md).
-
-## Testing
-
-Run the Python regression suite:
-
-```bash
-python3 scripts/test_install.py
-```
-
-If Python is not installed, use Nix:
-
-```bash
-nix shell nixpkgs#python3 --command python3 scripts/test_install.py
-```
-
-The PowerShell wrapper probe can also run reproducibly on NixOS:
-
-```bash
-nix shell nixpkgs#python3 --command python3 scripts/test_powershell_wrappers.py
-```
-
-The checks cover read-only planning/status, safe preflight blocking, installation modes, manifest compatibility, Bash forwarding, PowerShell parsing/forwarding, copy-only installation, and the tracked mother link.
+The helper refuses a current, dirty, active, detached, or unmerged worktree. It uses neither `git worktree remove --force` nor `git branch -D`. See [`20261102_2321_finish-completed-worktree.md`](.ai/workflows/20261102_2321_finish-completed-worktree.md).
 
 ## Windows and NixOS boundaries
 
-PowerShell Core can be exercised on NixOS, and that is useful evidence for parsing and wrapper argument forwarding. It does not prove native Windows behavior.
+PowerShell Core can be probed from NixOS for parsing, argument forwarding, no-write behavior, and Linux-side installation. That is useful evidence, but it does not prove native Windows behavior.
 
-Native Windows validation is still required for:
-
-- NTFS symlink permissions;
-- the `cmd.exe mklink /J` junction fallback;
-- Windows path semantics;
-- native PowerShell binding and filesystem behavior.
-
-Until those scenarios run on a Windows host or Windows CI runner, GAMK describes Windows support as unverified rather than fully validated.
+Native Windows validation is still required for NTFS symlink permissions, `cmd.exe mklink /J` junction fallback, Windows path semantics, and native PowerShell filesystem behavior. Until those scenarios run on a Windows host or Windows CI runner, GAMK describes Windows support as unverified.
 
 ## Documentation map
 
-- [`global/INDEX.md`](global/INDEX.md) — reusable global context and loading rules;
-- [`gamk.md`](.ai/wiki/gamk.md) — architecture and operational reference;
+- [`global/INDEX.md`](global/INDEX.md) — reusable agent context and loading rules;
+- [`gamk.md`](.ai/wiki/gamk.md) — architecture and operations;
 - [`20261102_2005_agents-parity.md`](.ai/skills/20261102_2005_agents-parity.md) — shared/mother instruction parity;
+- [`20261102_2005_structural-upgrade.md`](.ai/skills/20261102_2005_structural-upgrade.md) — deliberate consumer upgrades;
 - [`20261102_2239_powershell-wrapper-validation.md`](.ai/skills/20261102_2239_powershell-wrapper-validation.md) — NixOS PowerShell validation;
-- [`20261102_2200_update-agent-instructions.md`](.ai/workflows/20261102_2200_update-agent-instructions.md) — generated instruction workflow.
+- [`20261102_2200_update-agent-instructions.md`](.ai/workflows/20261102_2200_update-agent-instructions.md) — generated instruction workflow;
+- [`20261102_2321_finish-completed-worktree.md`](.ai/workflows/20261102_2321_finish-completed-worktree.md) — completed-worktree lifecycle.
 
-## Project name and stable interfaces
+## In short
 
-The public name is **GAMK — Git Agent Memory Kit**. The name describes the complete kit rather than only its former global-link mechanism.
-
-The following interfaces remain stable on purpose:
-
-- consumer `.ai/` layout;
-- `.ai/global-manifest.json`;
-- `scripts/install.*` and `scripts/copy-install.*`;
-- `.git-worktrees/` for auxiliary worktrees;
-- the source `global/` directory.
-
-This lets the project gain a clearer identity without making existing consumer paths or local workflows move unnecessarily.
+GAMK gives an agent a place to remember how a project works, gives humans a place to review why it changed, and gives both a safe way to carry that system into another repository.
