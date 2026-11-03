@@ -28,8 +28,8 @@ flowchart LR
         W["work/"]
         L["logs/"]
         K["wiki/"]
-        D["decisions/"]
         I["analyses/"]
+        D["decisions/"]
         F["forms/"]
         P["workflows/"]
         S["skills/"]
@@ -37,7 +37,7 @@ flowchart LR
         T["templates/"]
         G["global/"]
 
-        W ~~~ L ~~~ K ~~~ D ~~~ I ~~~ F ~~~ P ~~~ S ~~~ R ~~~ T ~~~ G
+        W ~~~ L ~~~ K ~~~ I ~~~ D ~~~ F ~~~ P ~~~ S ~~~ R ~~~ T ~~~ G
     end
 
     style G fill:transparent,stroke:#666,stroke-dasharray: 5 5
@@ -163,7 +163,7 @@ The installed `AGENTS.md` gives the agent the startup contract. In broad terms, 
 
 1. discover the project's applicable rules, skills, and workflows;
 2. inspect `.ai/work/doing/` before starting new work;
-3. preserve continuity in tasks, logs, wiki, decisions, analyses, and forms;
+3. preserve continuity in tasks, logs, wiki, analyses, decisions, and forms;
 4. follow the project's instructions before optional global defaults;
 5. ask before consequential migrations or destructive changes;
 6. close completed tasks and clean temporary worktrees safely.
@@ -173,8 +173,8 @@ The directories have distinct jobs:
 - `work/` is the execution queue: active, next, backlog, blocked, done, and abandoned work;
 - `logs/` is the chronological project journal;
 - `wiki/` is the current, consolidated project knowledge;
-- `decisions/` stores durable commitments and trade-offs;
 - `analyses/` stores substantial research with evidence and conclusions;
+- `decisions/` stores durable commitments and trade-offs;
 - `forms/` stores structured, asynchronous user decisions;
 - `global/` is optional shared context, either a directory or local symlink;
 - `workflows/` stores repeatable procedures;

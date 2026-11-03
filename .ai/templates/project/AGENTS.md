@@ -44,8 +44,8 @@ Never remove the current worktree, a dirty worktree, or an unmerged branch. Neve
 │       └── wontdo/
 ├── logs/             # Chronological project journal
 ├── wiki/             # Living project knowledge base
-├── decisions/        # Significant decisions and rationale
 ├── analyses/        # Research, evidence, analysis
+├── decisions/        # Significant decisions and rationale
 │   ├── doing/
 │   └── closed/
 │       ├── done/
@@ -151,22 +151,7 @@ Each log should explain **what happened, why it matters, and what comes next**, 
 
 The wiki should describe **what is currently understood and why**, not merely what was done.
 
-## 6. Decisions
-
-`decisions/<YYYYMMDD>_<HHMM>_<slug>.md`
-
-Record significant decisions arising from conversations, analyses, forms, or implementation.
-
-Include the decision, context, rationale, alternatives considered, consequences, and origin.
-
-- Distinguish confirmed decisions from proposals, preferences, and unresolved questions.
-- Link originating work, analyses, forms, and relevant wiki pages.
-- Record decisions that constrain product behavior, architecture, scope, or future work.
-- Preserve historical decisions; explicitly reference superseded decisions rather than silently rewriting them.
-- Update `wiki/` when decisions change the project's current understanding.
-- Record significant decisions in `logs/`.
-
-## 7. Analyses
+## 6. Analyses
 
 Substantial research and analysis intended for both agents and human reading. Analyses are independent knowledge artifacts, but their execution is always tracked in `work/`.
 
@@ -192,6 +177,21 @@ analyses/
 - Transfer durable findings to `wiki/` when appropriate.
 
 Analyses are designed for repeated consultation, including directly by the user. They must remain understandable independently of their originating task or conversation.
+
+## 7. Decisions
+
+`decisions/<YYYYMMDD>_<HHMM>_<slug>.md`
+
+Record significant decisions arising from conversations, analyses, forms, or implementation.
+
+Include the decision, context, rationale, alternatives considered, consequences, and origin.
+
+- Distinguish confirmed decisions from proposals, preferences, and unresolved questions.
+- Link originating work, analyses, forms, and relevant wiki pages.
+- Record decisions that constrain product behavior, architecture, scope, or future work.
+- Preserve historical decisions; explicitly reference superseded decisions rather than silently rewriting them.
+- Update `wiki/` when decisions change the project's current understanding.
+- Record significant decisions in `logs/`.
 
 ## 8. Forms
 
