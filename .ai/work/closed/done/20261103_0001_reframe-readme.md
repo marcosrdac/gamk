@@ -49,4 +49,4 @@ Rewrite `README.md` so it first sells the benefits of durable agent memory, then
 
 ## Next action
 
-No implementation action remains; close this task, integrate directly into `main`, and remove this worktree with the cleanup helper.
+No implementation action remains; commit `1d3ea1f` was integrated into `main`, the temporary worktree was removed safely, and the updated `main` is ready for publication.
