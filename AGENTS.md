@@ -8,7 +8,7 @@ If this file is in your context, you have already received the repository's root
 
 **Never modify the main Git worktree unless explicitly instructed by the user.**
 
-- Default: create a dedicated branch and worktree under `<repo>/.worktrees/`.
+- Default: create a dedicated branch and worktree under `<repo>/.git-worktrees/`.
 - If already inside an appropriate worktree, continue there.
 - Inspect existing worktrees and branches before creating new ones. Never overwrite unrelated work.
 - The main worktree may be inspected, but not modified by default.
@@ -42,6 +42,7 @@ If this file is in your context, you have already received the repository's root
 │   ├── creating/
 │   ├── pending/
 │   └── answered/
+├── global/           # Optional shared context (directory or local symlink)
 ├── workflows/        # Repeatable operational procedures
 ├── skills/           # Specialized agent capabilities
 ├── rules/            # Mandatory context-specific instructions
@@ -51,6 +52,10 @@ If this file is in your context, you have already received the repository's root
 **Discovery:** Treat `.ai/` as the repository's persistent memory. Explore directories using `ls`, `find`, `rg --files`, or equivalents. Use filename prefixes, sorting, and filtering for efficient navigation. Proactively inspect related files, follow references, and investigate dependencies, previous decisions, and documentation. When uncertain, expand the search rather than assume information is irrelevant. Never sacrifice understanding to reduce context consumption.
 
 **Relationship:** `work/` tracks every activity; other directories contain associated artifacts, knowledge, or operational resources. Every investigation, form creation, documentation change, or other substantive activity must be tracked by a work task.
+
+**Project instructions:** At startup, discover applicable project rules in `.ai/rules/` and read each rule relevant to the task before acting. Discover project skills in `.ai/skills/` and workflows in `.ai/workflows/`; consult relevant ones. These project-local instructions are distinct from optional shared global context.
+
+**Optional shared context:** If `.ai/global/` exists as a directory or symlink, read its `INDEX.md` when present. Follow any “Always Read” instructions there (including applicable mandatory rules); also load relevant available `rules/`, `skills/`, and `workflows/` as indicated by the index and task. Do not assume every category exists. Global guidance is a personal default: explicit task instructions take precedence over project instructions, which take precedence over global context. If `.ai/global/` is absent, dangling, or unreadable, continue with project context; it must not be required for collaborators.
 
 ## 3. Work Management
 
@@ -72,7 +77,7 @@ Each task is a single Markdown file containing YAML frontmatter, objective, plan
 ---
 status: active
 branch: feat/example
-worktree: .worktrees/example
+worktree: .git-worktrees/example
 ---
 ```
 
@@ -243,11 +248,11 @@ Skills describe specialized agent capabilities, approaches, and reusable problem
 
 - Consult available skills when they could improve the work.
 - Unlike rules, skills are optional unless explicitly required by an applicable instruction.
-- Maintain the filename index below whenever skills are created, renamed, or removed.
+- Maintain a discoverable index in `.ai/` documentation whenever project-local skills are created, renamed, or removed; global skills remain indexed by `.ai/global/INDEX.md` or relevant global documentation.
 
 **Skills index:**
 
-<!-- List existing skill filenames here; do not invent entries. -->
+Discover installed skills by listing `.ai/skills/` and optional `.ai/global/skills/`.
 
 ## 11. Rules
 
@@ -256,13 +261,13 @@ Skills describe specialized agent capabilities, approaches, and reusable problem
 Rules contain mandatory context-specific instructions.
 
 - **Read every applicable rule before acting in its domain.**
-- Use the index below to identify applicability; investigate further whenever scope is uncertain.
-- Maintain a complete index containing each rule's filename and a brief description of its scope.
-- When creating, renaming, or removing rules, update this index immediately.
+- Use the project/global indexes and directory listings to identify applicability; investigate further whenever scope is uncertain.
+- Maintain a complete project-local rules index in `.ai/` documentation containing each filename and a brief scope. Global rules are indexed by `.ai/global/INDEX.md` or relevant global documentation.
+- When creating, renaming, or removing project-local rules, update their index immediately.
 
 **Rules index:**
 
-<!-- - `YYYYMMDD_HHMM_slug.md`: brief scope and applicability summary. -->
+Discover applicable rules by listing `.ai/rules/` and optional `.ai/global/rules/`; read each applicable rule before acting in its domain.
 
 ## 12. Templates
 
@@ -286,5 +291,24 @@ Reusable structures for tasks, logs, decisions, investigations, forms, skills, r
 - **Support asynchronous decisions:** provide comprehensive, independently answerable forms; respect partial responses.
 - **Write efficiently:** favor accurate, structured, useful records over redundant narration. Do not confuse concise writing with superficial investigation.
 - **Respect instructions:** applicable rules are mandatory; skills and workflows support execution.
-- **Preserve `AGENTS.md`:** do not modify it without explicit user instruction, except for maintaining the rules and skills indexes.
+- **Preserve `AGENTS.md`:** do not modify it without explicit user instruction. If an `.ai/workflows/` workflow applies to maintaining instructions, follow that workflow.
 - **Never invent context:** verify existing state, investigate uncertainty, and preserve evidence.
+
+<!-- Generated by scripts/generate_mother_agents.py; edit the template and extensions, not this file. -->
+
+## Mother repository extensions
+
+These instructions apply only to the canonical git-ai-global source repository. They are generated into the repository-root `AGENTS.md` and are never installed into consumer projects.
+
+### Load mother-specific operating context
+
+At startup, after the shared project context map:
+
+1. Read `.ai/global/INDEX.md` and follow its **Always Read** entries.
+2. Read every applicable mother-local rule in `.ai/rules/` before acting in its domain. These are repository-specific instructions; do not treat them as consumer defaults or copy them into the consumer template.
+3. Consult mother-local skills in `.ai/skills/` when relevant, and workflows in `.ai/workflows/` for repeatable procedures.
+4. Keep consumer-shared context in `global/templates/project/` and mother-only instructions in `.ai/`. Do not duplicate shared text in these extensions.
+
+### Maintain generated agent instructions
+
+When changing the shared consumer instructions or these mother-only extensions, follow the mother-local workflow `update-agent-instructions.md`. The consumer template is the source for shared content; regenerate the root `AGENTS.md` with the provided generator. Do not hand-edit generated root content.

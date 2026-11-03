@@ -1,0 +1,16 @@
+## Mother repository extensions
+
+These instructions apply only to the canonical git-ai-global source repository. They are generated into the repository-root `AGENTS.md` and are never installed into consumer projects.
+
+### Load mother-specific operating context
+
+At startup, after the shared project context map:
+
+1. Read `.ai/global/INDEX.md` and follow its **Always Read** entries.
+2. Read every applicable mother-local rule in `.ai/rules/` before acting in its domain. These are repository-specific instructions; do not treat them as consumer defaults or copy them into the consumer template.
+3. Consult mother-local skills in `.ai/skills/` when relevant, and workflows in `.ai/workflows/` for repeatable procedures.
+4. Keep consumer-shared context in `global/templates/project/` and mother-only instructions in `.ai/`. Do not duplicate shared text in these extensions.
+
+### Maintain generated agent instructions
+
+When changing the shared consumer instructions or these mother-only extensions, follow the mother-local workflow `update-agent-instructions.md`. The consumer template is the source for shared content; regenerate the root `AGENTS.md` with the provided generator. Do not hand-edit generated root content.

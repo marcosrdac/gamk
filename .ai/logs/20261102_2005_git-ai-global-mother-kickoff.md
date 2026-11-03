@@ -1,0 +1,40 @@
+---
+work: 010_20261102_2005_git-ai-global-mother.md
+branch: feat/git-ai-global-mother
+worktree: .git-worktrees/git-ai-global-mother
+origin: user conversation
+---
+
+# Kickoff: make ai-memory the git-ai-global mother repository
+
+The current project directory was not a Git repository, so implementation could not safely follow the project's required branch/worktree isolation. The user explicitly authorized initializing Git here. `AGENTS.md` was committed as the initial baseline (`40c317c997ecf6ca4bdc86155945c1e890ef8f4d`); the sibling `ai-memory-instance` was left untouched. A dedicated branch and worktree, `feat/git-ai-global-mother` at `.git-worktrees/git-ai-global-mother`, were created and selected as the session directory.
+
+The legacy installer repository was inspected as reference; it has a pre-existing local `AGENTS.md` modification and is not being modified. Its 14-test suite passed via Nix. The worktree initially contains only tracked `AGENTS.md`, because empty `.ai/` directories are not represented in Git; reconstructing the memory layout and recording decisions/backlog are the first branch-local changes.
+
+The key product direction is now explicit: preserve the current structure; make root `global/` canonical; preflight conflicts before any install writes; route existing-project migrations through the target's own agent using a path- and commit-aware prompt; record source provenance without machine-specific paths in the manifest; and make structural upgrades consciously user-approved rather than automatic. Windows is required but still needs real validation.
+
+One implementation detail was corrected before any installer code was written: the installer must not change consumer `.gitignore`, `.git/info/exclude`, or the Git index. It will warn users to ignore the local absolute `.ai/global` link before committing. The mother repository tracks its relative link normally; no force-add or other Git operation is part of installation.
+
+Progress: repository memory, confirmed decisions, backlog entries, canonical global index/rules/template, parity and upgrade guidance, and the Python installer/wrappers/tests are now in this worktree. Twenty Linux regression tests pass using Nix-provided Python, including transactional rollback. The next work is a careful full review, shell executable-bit verification, and Windows validation. Windows remains an explicit gap.
+
+The mother-relative `.ai/global -> ../global` link has now been created in this worktree with the dedicated plan/init commands, and the Bash entrypoint is executable. The expanded suite passes 21 Linux tests. The consumer template was revised to retain the core continuity and project-memory entrypoint while matching the mother AGENTS' startup/context-map guidance; exact parity verification remains part of review.
+
+User feedback on 2026-11-02 adds an important usability requirement: basic first installation must have a simple path that works without Python, since it is fundamentally copying files. Python remains appropriate for richer preflight, tailored migration prompts, manifests, and repair behavior, but cannot be mandatory for the basic bootstrap. Current next step is to add/document a platform-native copy-only path and define its safe use boundary. Windows execution remains unverified. The active work record has been updated after the user noted an extended gap in work/log visibility.
+
+Implemented `scripts/copy-install.sh` and `scripts/copy-install.ps1` for that minimal path. They copy the consumer AGENTS template and create standard `.ai/` directories only, refuse common pre-existing context indicators, and do not claim full provenance or configure the personal link. README and global maintenance/wiki guidance now distinguish this path from the Python-backed migration-aware installer. Added a Linux test for copy success and no-write refusal; PowerShell behavior still needs a Windows run.
+
+During handoff review, found and corrected two Python CLI safety issues: `plan-mother`/`init-mother` no longer create or mutate the source checkout's tracked link, and global-only installation refuses an occupied destination rather than reporting success. Removed duplicate correct-link handling. Added regression tests for these cases; the full Linux suite then passed 28 tests. Windows validation remains outstanding. Current implementation status is recorded in the closed task.
+
+Final rerun after the documentation/template changes: Bash syntax checks, Python compilation, all 28 unit tests, and `git diff --check` passed; `.ai/global` remains the relative link `../global`. The task remains active for an explicit resolution of the AGENTS parity difference and actual Windows validation.
+
+User asked whether the root AGENTS change escaped the worktree. Verified `git worktree list` and status: the main worktree remains on `main` at the base commit with no AGENTS modification; only the feature worktree has uncommitted index additions for the two skills and two rules. User accepted retaining those index additions after the scope was explained. No substantive policy edits to root AGENTS were made in the main worktree. Remaining work includes deciding/documenting root-vs-consumer template differences and Windows validation.
+
+User asked what is needed to finish the active task. Updated the task's next actions to make the remaining decisions and validation explicit: resolve root/template AGENTS policy (no substantive edit authorized yet), reconcile stale progress snapshots in the task record, rerun Linux checks, and obtain Windows-host validation. User accepted the skill/rule index additions in the isolated worktree but has not approved an intentional behavioral difference between root and consumer AGENTS.
+
+User resolved the AGENTS question: align the shared consumer instructions with root and load shared global context when `.ai/global/` exists as either a symlink or directory. Handoff review caught a mistake in interpreting “align”: copying root verbatim also copied mother-only rule/skill filenames into the consumer AGENTS, though those files are not installed there. Corrected the template to use generic `.ai/rules/` and `.ai/skills/` discovery, updated global INDEX “Always Read” entries and the context-loading rule, and clarified that AGENTS follows the global index's mandatory entries plus relevant available categories. Local inventories remain in root `.ai/`. Added regression coverage to prevent mother-only filenames leaking into consumer instructions. Windows validation remains a separate `next/` task.
+
+After the user clarified the generator/workflow design, the implementation task was reopened and completed. The generator, extension source, and mother-local workflow are implemented. Final verification passed: 33 Python tests, Python compilation, Bash syntax, generator `--check`, and `git diff --check`. Windows validation remains queued at `.ai/work/next/000_20261102_2200_validate-windows-installers.md`. No commit, merge, or push occurred.
+
+User clarified that the **workflow** (not a rule) should enforce generated mother instructions. Implementation uses the consumer template as shared source; the mother-only extension is `.ai/templates/mother-AGENTS.extensions.md` and the workflow is `.ai/workflows/20261102_2200_update-agent-instructions.md`. User then clarified mother-only files do not belong in `global/`; moved the extension from `global/` into `.ai/` and updated generator, tests, workflow, and docs. The deterministic generator is not invoked by installer. Regression suite and generator check are rerun after relocation.
+
+User asked to move the implementation task back to `doing/` and list remaining verification. Reopened it at `.ai/work/doing/010_20261102_2005_git-ai-global-mother.md`. New audit scope: compare generated root AGENTS with initial commit, classify every difference, resolve duplicated sections and any unapproved memory structure references, verify the consumer/mother boundary and generator no-write/reproducibility behavior, then rerun tests. Windows validation remains in its separate `next/` task.
