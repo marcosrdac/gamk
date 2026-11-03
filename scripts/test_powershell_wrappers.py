@@ -101,7 +101,7 @@ def main() -> int:
     assert_contains(parsed, "parse OK")
     print("PowerShell parsing: OK")
 
-    with tempfile.TemporaryDirectory(prefix="ai-memory-pwsh-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="gamk-pwsh-") as temporary:
         workspace = Path(temporary)
 
         plan_target = workspace / "project with spaces"

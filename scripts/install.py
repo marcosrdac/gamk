@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan, inspect, install, and repair git-ai-global context in consumer projects."""
+"""Plan, inspect, install, and repair GAMK context in consumer projects."""
 
 from __future__ import annotations
 
@@ -13,6 +13,13 @@ from pathlib import Path
 from typing import Optional, Sequence
 
 SCHEMA_VERSION = 1
+PROJECT_NAME = "GAMK"
+PROJECT_SLUG = "gamk"
+SOURCE_MANIFEST_FORMAT = "gamk-source"
+CONSUMER_MANIFEST_FORMAT = "gamk-consumer"
+LEGACY_SOURCE_MANIFEST_FORMAT = "git-ai-global-source"
+LEGACY_CONSUMER_MANIFEST_FORMAT = "git-ai-global-consumer"
+LEGACY_REPOSITORY_NAME = "git-ai-global"
 MANIFEST = Path(".ai/global-manifest.json")
 PROJECT_DIRECTORIES = (
     "decisions", "forms/creating", "forms/pending", "forms/answered",
@@ -105,16 +112,24 @@ def source_identity(source: Path) -> tuple[str, Optional[str]]:
     return commit.stdout.strip(), url or None
 
 
+def is_source_manifest(data: object) -> bool:
+    if not isinstance(data, dict) or not isinstance(data.get("schema_version"), int):
+        return False
+    identity = (data.get("format"), data.get("repository_name"))
+    return identity in (
+        (SOURCE_MANIFEST_FORMAT, PROJECT_SLUG),
+        (LEGACY_SOURCE_MANIFEST_FORMAT, LEGACY_REPOSITORY_NAME),
+    )
+
+
 def source_manifest(source: Path) -> dict[str, object]:
     path = source / "global/manifest.json"
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         raise RuntimeError(f"Invalid or missing source manifest {path}: {error}") from error
-    if (not isinstance(data, dict) or data.get("format") != "git-ai-global-source"
-            or data.get("repository_name") != "git-ai-global"
-            or not isinstance(data.get("schema_version"), int)):
-        raise RuntimeError(f"Unrecognized source manifest: {path}")
+    if not is_source_manifest(data):
+        raise RuntimeError(f"Unrecognized {PROJECT_NAME} source manifest: {path}")
     return data
 
 
@@ -124,10 +139,8 @@ def source_manifest_from_global(global_dir: Path) -> dict[str, object]:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         raise RuntimeError(f"Invalid or missing global source manifest {path}: {error}") from error
-    if (not isinstance(data, dict) or data.get("format") != "git-ai-global-source"
-            or data.get("repository_name") != "git-ai-global"
-            or not isinstance(data.get("schema_version"), int)):
-        raise RuntimeError(f"Unrecognized global source manifest: {path}")
+    if not is_source_manifest(data):
+        raise RuntimeError(f"Unrecognized {PROJECT_NAME} source manifest: {path}")
     return data
 
 
@@ -136,12 +149,12 @@ def consumer_manifest(path: Path) -> dict[str, object]:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
         raise RuntimeError(f"Invalid consumer manifest {path}: {error}") from error
-    if (not isinstance(data, dict) or data.get("format") != "git-ai-global-consumer"
+    if (not isinstance(data, dict) or data.get("format") not in (CONSUMER_MANIFEST_FORMAT, LEGACY_CONSUMER_MANIFEST_FORMAT)
             or not isinstance(data.get("schema_version"), int)
             or not isinstance(data.get("base_commit"), str)
             or not data.get("base_commit")
             or not isinstance(data.get("source_url"), (str, type(None)))):
-        raise RuntimeError(f"Unrecognized consumer manifest: {path}")
+        raise RuntimeError(f"Unrecognized {PROJECT_NAME} consumer manifest: {path}")
     installation_mode = data.get("installation_mode", "full")
     if not isinstance(installation_mode, str) or installation_mode not in ("full", "local"):
         raise RuntimeError(f"Unrecognized consumer installation mode: {path}")
@@ -210,7 +223,7 @@ def collect_signals(target: Target, source: Path, mode: str = "full") -> tuple[S
             if path_exists(path):
                 signals.append(Signal(path, "existing agent instructions/configuration"))
         if mode == "full" and path_exists(target.ai_dir):
-            signals.append(Signal(target.ai_dir, "existing AI context directory"))
+            signals.append(Signal(target.ai_dir, "existing agent context directory"))
         for relative in AGENT_DIRS:
             path = root / relative
             if path.is_dir():
@@ -566,7 +579,7 @@ def install(target: Target, result: Preflight, mode: str) -> int:
             if made_link_parent:
                 created_dirs.append(target.global_link.parent)
         manifest = {
-            "format": "git-ai-global-consumer",
+            "format": CONSUMER_MANIFEST_FORMAT,
             "schema_version": SCHEMA_VERSION,
             "source_url": result.source_url,
             "base_commit": result.source_commit,
@@ -613,7 +626,7 @@ def repair_link(target: Target, result: Preflight) -> int:
     if path_exists(link) and not link.is_symlink():
         raise RuntimeError(f"Refusing to replace existing non-symlink global path: {link}")
     if path_exists(link.parent) and not link.parent.is_dir():
-        raise RuntimeError(f"AI context path is not a directory: {link.parent}")
+        raise RuntimeError(f"Agent context path is not a directory: {link.parent}")
     if link.is_symlink():
         try:
             if link.resolve(strict=True) == expected.resolve(strict=True):

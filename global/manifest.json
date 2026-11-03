@@ -1,5 +1,5 @@
 {
-  "format": "git-ai-global-source",
+  "format": "gamk-source",
   "schema_version": 1,
-  "repository_name": "git-ai-global"
+  "repository_name": "gamk"
 }

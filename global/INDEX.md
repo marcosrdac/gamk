@@ -1,6 +1,6 @@
 # Personal Global Context Index
 
-This directory is the canonical source of personal, reusable AI context and consumer-project starter material for this repository. Consumer projects may link `.ai/global/` to this checkout locally; the consumer link is not shared through Git. This repository's own `.ai/global` is a tracked relative symlink to `../global`.
+This directory is the canonical source of personal, reusable agent context and consumer-project starter material for this repository. Consumer projects may link `.ai/global/` to this checkout locally; the consumer link is not shared through Git. This repository's own `.ai/global` is a tracked relative symlink to `../global`.
 
 Personal global content must not contain consumer-project facts or credentials. Consumer projects remain independently usable without a global link.
 

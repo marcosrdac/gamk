@@ -75,6 +75,8 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(root.count("**Project instructions:**"), 1)
         for shared_contract in (
             "**Optional shared context:**",
+            "A dedicated worktree is temporary execution space, not permanent project inventory.",
+            "Never remove the current worktree, a dirty worktree, or an unmerged branch.",
             "explicit task instructions take precedence over project instructions",
             "**Discovery:** Treat `.ai/` as the repository's persistent memory.",
             "Every investigation, form creation, documentation change, or other substantive activity must be tracked by a work task.",
@@ -97,6 +99,7 @@ class InstallerTests(unittest.TestCase):
 
     def test_mother_extension_names_local_rules_and_workflow(self):
         text = (REPOSITORY / ".ai/templates/mother-AGENTS.extensions.md").read_text(encoding="utf-8")
+        self.assertIn("canonical GAMK source repository", text)
         self.assertIn("Read every applicable mother-local rule in `.ai/rules/`", text)
         self.assertIn("mother-local workflow `update-agent-instructions.md`", text)
         self.assertIn("never installed into consumer projects", text)
@@ -131,6 +134,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(generated.count("# Agent Instructions"), 1)
         self.assertTrue(generated.endswith(extension + "\n"))
         self.assertIn("mother-local rule", generated)
+        self.assertIn("canonical GAMK source repository", generated)
         self.assertNotIn("Mother repository extensions", template)
         self.assertNotIn(".ai/rules/20261102_2005_agents-parity.md", template)
 
@@ -205,7 +209,7 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue((root / ".ai" / "work" / "doing").is_dir())
         self.assertEqual((root / ".ai" / "global").resolve(), REPOSITORY / "global")
         manifest = json.loads((root / ".ai" / "global-manifest.json").read_text())
-        self.assertEqual(manifest["format"], "git-ai-global-consumer")
+        self.assertEqual(manifest["format"], install.CONSUMER_MANIFEST_FORMAT)
         self.assertEqual(manifest["base_commit"], install.source_identity(REPOSITORY)[0])
         self.assertEqual(manifest["schema_version"], install.SCHEMA_VERSION)
         self.assertEqual(manifest["installation_mode"], "full")
@@ -357,9 +361,44 @@ class InstallerTests(unittest.TestCase):
 
     def test_manifest_records_source_url_when_source_has_origin(self):
         root = self.project()
-        with patch.object(install, "source_identity", return_value=("abc123", "https://example.invalid/git-ai-global.git")):
+        with patch.object(install, "source_identity", return_value=("abc123", "https://example.invalid/gamk.git")):
             result = install.preflight(install.Target(root, root / ".ai"))
-            self.assertEqual(result.source_url, "https://example.invalid/git-ai-global.git")
+            self.assertEqual(result.source_url, "https://example.invalid/gamk.git")
+
+    def test_current_and_legacy_manifest_identifiers_are_readable(self):
+        source = install.source_manifest(REPOSITORY)
+        self.assertEqual(source["format"], install.SOURCE_MANIFEST_FORMAT)
+        self.assertEqual(source["repository_name"], install.PROJECT_SLUG)
+
+        legacy_global = self.workspace / "legacy-global"
+        legacy_global.mkdir()
+        (legacy_global / "manifest.json").write_text(
+            json.dumps({
+                "format": install.LEGACY_SOURCE_MANIFEST_FORMAT,
+                "schema_version": install.SCHEMA_VERSION,
+                "repository_name": install.LEGACY_REPOSITORY_NAME,
+            }),
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            install.source_manifest_from_global(legacy_global)["repository_name"],
+            install.LEGACY_REPOSITORY_NAME,
+        )
+
+        legacy_consumer = self.workspace / "legacy-consumer.json"
+        legacy_consumer.write_text(
+            json.dumps({
+                "format": install.LEGACY_CONSUMER_MANIFEST_FORMAT,
+                "schema_version": install.SCHEMA_VERSION,
+                "source_url": None,
+                "base_commit": "abc123",
+            }),
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            install.consumer_manifest(legacy_consumer)["format"],
+            install.LEGACY_CONSUMER_MANIFEST_FORMAT,
+        )
 
     def test_source_url_credentials_are_not_persisted(self):
         with patch.object(install, "run_git") as git:

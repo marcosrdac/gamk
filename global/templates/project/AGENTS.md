@@ -16,6 +16,18 @@ If this file is in your context, you have already received the repository's root
 - Preserve branch, worktree, current task, progress, and next action in every context handoff or compaction.
 - Before merging, verify completion, tests, and the work-state requirements below.
 
+### Worktree lifecycle
+
+A dedicated worktree is temporary execution space, not permanent project inventory. When its task is complete:
+
+1. Close the task: move it to `work/closed/done/` or `work/closed/wontdo/`, leaving `work/doing/` empty.
+2. Verify tests and integrate the branch into the project's approved base branch.
+3. From a different clean checkout of that base branch, confirm the feature worktree has no uncommitted or untracked files.
+4. Remove the completed worktree with `git worktree remove <path>` and delete only its already-merged branch with `git branch -d <branch>`.
+5. Run `git worktree prune` to clear stale administrative records.
+
+Never remove the current worktree, a dirty worktree, or an unmerged branch. Never use `git worktree remove --force` or `git branch -D` to bypass an unresolved condition. If cleanup is blocked, preserve the worktree and resolve the reported task, data, or integration issue explicitly.
+
 ## 2. Repository Memory — `.ai/`
 
 ```text

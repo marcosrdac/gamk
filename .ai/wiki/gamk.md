@@ -1,12 +1,12 @@
-# git-ai-global architecture and operations
+# GAMK architecture and operations
 
 ## Purpose and source layout
 
-This repository preserves the project's `.ai/` continuity structure and acts as the canonical source/installer for consumers. Reusable personal context and consumer templates live under root `global/`. The mother repository's `.ai/global -> ../global` is a tracked relative symlink. A consumer instead has a local absolute `.ai/global` symlink to this checkout; it is machine-specific and should not be committed.
+This repository is GAMK — Git Agent Memory Kit. It preserves a reusable `.ai/` continuity structure and acts as the canonical source/installer for consumer projects. Reusable personal context and consumer templates live under root `global/`. The source repository's `.ai/global -> ../global` is a tracked relative symlink. A consumer instead has a local absolute `.ai/global` symlink to this checkout; it is machine-specific and should not be committed.
 
 ## Consumer manifest
 
-`.ai/global-manifest.json` records format, installation mode, schema version, source URL (with URL credentials stripped), and full source base commit. It must not contain machine-specific absolute paths. A missing source origin is represented as `null`. Local mode intentionally has no personal `.ai/global` link.
+`.ai/global-manifest.json` records the `gamk-consumer` format, installation mode, schema version, source URL (with URL credentials stripped), and full source base commit. It must not contain machine-specific absolute paths. A missing source origin is represented as `null`. Local mode intentionally has no personal `.ai/global` link. The installer still reads the legacy `git-ai-global-consumer` identifier for compatibility.
 
 ## Commands and safety
 
@@ -19,6 +19,12 @@ This repository preserves the project's `.ai/` continuity structure and acts as 
 - Link-only operations inspect only the link destination. Repair replaces broken/stale symlinks but refuses to replace a real file or directory.
 - The installer never modifies `.gitignore`, `.git/info/exclude`, or the Git index. It tells the user to ignore the local link before committing.
 - The installer refuses to run consumer installation against the mother repository; `plan-mother`/`init-mother` maintain its relative link.
+
+## Worktree lifecycle
+
+Worktrees are temporary execution spaces. Every project using GAMK receives the same basic closure rule through the shared `AGENTS.md` template: close the task, integrate the branch, verify that the worktree is clean and has no active `work/doing/` task, remove it from another base checkout, delete only the merged branch with `git branch -d`, and run `git worktree prune`. Dirty, active, detached, current, or unmerged worktrees are preserved rather than force-removed.
+
+The mother repository provides `.ai/workflows/20261102_2321_finish-completed-worktree.md` and `scripts/finish-worktree.py` for a dry-run-first implementation of those checks.
 
 ## Migration and upgrades
 
@@ -36,4 +42,3 @@ PowerShell Core can be probed reproducibly on NixOS with `scripts/test_powershel
 
 - Native Windows installer validation: `.ai/work/pool/backlog/20261102_2246_validate-native-windows-installers.md`.
 - Git submodule distribution alternative: `.ai/work/next/010_20261102_2005_study-submodule-global-source.md`.
-- Source/manifest divergence warnings: `.ai/work/doing/010_20261102_2005_source-divergence-status.md`.
