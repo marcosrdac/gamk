@@ -19,64 +19,15 @@ GAMK is the kit that makes this possible in another repository. It provides the 
 
 ## The project-side view: `AGENTS.md` first
 
-The diagrams below show the same relationship in different visual languages. They are alternatives for review; the final README should keep the one that explains the model most clearly.
-
-### Option A — reading path
-
 ```mermaid
 flowchart TD
-    A["AGENTS.md<br/>entrypoint and operating contract"]
-    M[".ai/<br/>project memory map"]
-    W[".ai/work/<br/>01 tasks and priorities"]
-    L[".ai/logs/<br/>02 project journal"]
-    D[".ai/decisions/<br/>03 rationale and commitments"]
-    K[".ai/wiki/<br/>04 current project knowledge"]
-    I[".ai/investigations/<br/>05 evidence and analysis"]
-    F[".ai/forms/<br/>06 structured user decisions"]
-    G[".ai/global/<br/>07 optional link to GAMK global/"]
-    P[".ai/workflows/<br/>08 repeatable procedures"]
-    S[".ai/skills/<br/>09 specialized capabilities"]
-    R[".ai/rules/<br/>10 mandatory behavior"]
-    T[".ai/templates/<br/>11 reusable structures"]
-
-    A --> M
-    M --> W --> L --> D --> K --> I --> F --> G --> P --> S --> R --> T
+    A["AGENTS.md"] --> M[".ai/"]
+    M --> W["work/"] --> L["logs/"] --> D["decisions/"] --> K["wiki/"] --> I["investigations/"] --> F["forms/"] --> P["workflows/"] --> S["skills/"] --> R["rules/"] --> T["templates/"]
+    T -.-> G["global/"]
+    style G fill:transparent,stroke:#666,stroke-dasharray: 5 5
 ```
 
-### Option B — ordered memory rail
-
-```mermaid
-flowchart LR
-    A["AGENTS.md<br/>start here"] --> M[".ai/<br/>project memory"]
-
-    subgraph O["The order described by AGENTS.md"]
-        direction LR
-        W["01<br/>work"] --> L["02<br/>logs"] --> D["03<br/>decisions"] --> K["04<br/>wiki"] --> I["05<br/>investigations"] --> F["06<br/>forms"] --> G["07<br/>global"] --> P["08<br/>workflows"] --> S["09<br/>skills"] --> R["10<br/>rules"] --> T["11<br/>templates"]
-    end
-
-    M --> W
-```
-
-### Option C — responsibility map
-
-```mermaid
-flowchart TD
-    A["AGENTS.md<br/>entrypoint + operating contract"] --> M[".ai/<br/>project memory map"]
-
-    M --> W["01 · work<br/>tasks and priorities"]
-    M --> L["02 · logs<br/>project journal"]
-    M --> D["03 · decisions<br/>rationale and commitments"]
-    M --> K["04 · wiki<br/>current project knowledge"]
-    M --> I["05 · investigations<br/>evidence and analysis"]
-    M --> F["06 · forms<br/>structured user decisions"]
-    M --> G["07 · global<br/>optional link to GAMK global/"]
-    M --> P["08 · workflows<br/>repeatable procedures"]
-    M --> S["09 · skills<br/>specialized capabilities"]
-    M --> R["10 · rules<br/>mandatory behavior"]
-    M --> T["11 · templates<br/>reusable structures"]
-```
-
-All three follow the memory map presented in `AGENTS.md`. The order is a map of responsibilities, not a demand to read every file on every task: `AGENTS.md` tells the agent what to discover, and the current task determines which parts matter.
+The solid path follows the memory map in `AGENTS.md`. The dashed `global/` is optional shared context linked through `.ai/global`.
 
 The important shift is that the agent does not begin with an abstract “memory system”. It begins with `AGENTS.md`, then follows the project's own map to the task state, history, decisions, knowledge, rules, capabilities, and reusable structures. GAMK does not force a cloud service, a model vendor, or a particular editor; the memory remains inspectable files in the project.
 
