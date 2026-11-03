@@ -298,9 +298,6 @@ GAMK creates the instruction contract and the reusable source that contract can 
 ```text
 gamk/
 ├── global/
-│   ├── rules/                       Reusable rules
-│   ├── workflows/                  Reusable procedures
-│   ├── skills/                      Reusable skills
 │   ├── INDEX.md                     Global-context loading map
 │   └── manifest.json                Source identity/schema
 ├── scripts/
@@ -316,7 +313,7 @@ gamk/
 │   ├── wiki/                        Current architecture/operations knowledge
 │   ├── decisions/                   Architectural commitments
 │   ├── templates/project/           Local consumer AGENTS.md template
-│   ├── rules/                       Mother-local mandatory rules
+│   ├── rules/                       Mother-local mandatory rules and index
 │   ├── workflows/                  Mother-local procedures
 │   └── skills/                      Mother-local capabilities
 ├── AGENTS.md                        Generated mother instructions
@@ -391,7 +388,8 @@ Native Windows validation is still required for NTFS symlink permissions, `cmd.e
 
 ## Documentation map
 
-- [`global/INDEX.md`](global/INDEX.md) — reusable agent context and loading rules;
+- [`global/INDEX.md`](global/INDEX.md) — optional reusable personal agent context;
+- [`.ai/rules/INDEX.md`](.ai/rules/INDEX.md) — GAMK-only maintenance rules;
 - [`gamk.md`](.ai/wiki/gamk.md) — architecture and operations;
 - [`20261102_2200_update-agent-instructions.md`](.ai/workflows/20261102_2200_update-agent-instructions.md) — generated instruction workflow;
 - [`20261102_2321_finish-completed-worktree.md`](.ai/workflows/20261102_2321_finish-completed-worktree.md) — completed-worktree lifecycle;

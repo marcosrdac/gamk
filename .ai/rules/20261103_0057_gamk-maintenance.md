@@ -1,6 +1,6 @@
-# Maintaining GAMK
+# GAMK maintenance rule
 
-This repository is the canonical source for GAMK — Git Agent Memory Kit: the current `.ai/` structure, reusable personal context, consumer templates, and installation tools.
+These instructions apply only to the canonical GAMK source repository. They are not consumer defaults and must not be placed under `global/` or installed into consumer projects.
 
 - Preserve this repository's existing `.ai/` structure unless the user explicitly approves a structural change.
 - Keep `.ai/templates/project/AGENTS.md` as the canonical shared content in the GAMK source repository. Do not edit root `AGENTS.md` by hand; the mother-local workflow generates it with a separate mother-only extension. The consumer template must not list mother-only rule/skill filenames, since those files are not installed into consumer `.ai/`.

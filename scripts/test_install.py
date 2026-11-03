@@ -114,10 +114,15 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("Follow any “Always Read” instructions there", text)
         self.assertIn("applicable mandatory rules", text)
         self.assertIn("must not be required for collaborators", text)
-        for mandatory_rule in ("rules/system-maintenance.md", "rules/context-loading.md"):
-            with self.subTest(mandatory_rule=mandatory_rule):
-                self.assertIn(mandatory_rule, (REPOSITORY / "global" / "INDEX.md").read_text(encoding="utf-8"))
-        self.assertIn("follow every “Always Read” entry", (REPOSITORY / "global" / "rules" / "context-loading.md").read_text(encoding="utf-8"))
+        global_index = (REPOSITORY / "global" / "INDEX.md").read_text(encoding="utf-8")
+        self.assertNotIn("## Always Read", global_index)
+        self.assertNotIn("system-maintenance.md", global_index)
+        self.assertNotIn("context-loading.md", global_index)
+        self.assertFalse((REPOSITORY / "global" / "rules" / "system-maintenance.md").exists())
+        self.assertFalse((REPOSITORY / "global" / "rules" / "context-loading.md").exists())
+        local_rules = (REPOSITORY / ".ai" / "rules" / "INDEX.md").read_text(encoding="utf-8")
+        self.assertIn("20261103_0057_gamk-maintenance.md", local_rules)
+        self.assertIn("not consumer defaults", (REPOSITORY / ".ai" / "rules" / "20261103_0057_gamk-maintenance.md").read_text(encoding="utf-8"))
 
     def test_consumer_agents_do_not_embed_mother_only_skill_or_rule_names(self):
         text = (REPOSITORY / ".ai" / "templates" / "project" / "AGENTS.md").read_text(encoding="utf-8")

@@ -6,7 +6,7 @@ These instructions apply only to the canonical GAMK source repository. They are 
 
 At startup, after the shared project context map:
 
-1. Read `.ai/global/INDEX.md` and follow its **Always Read** entries.
+1. Read `.ai/global/INDEX.md` when present and load relevant optional global context. Do not assume that global context contains mandatory entries.
 2. Read every applicable mother-local rule in `.ai/rules/` before acting in its domain. These are repository-specific instructions; do not treat them as consumer defaults or copy them into the consumer template.
 3. Follow relevant mother-local workflows in `.ai/workflows/`, then consult mother-local skills in `.ai/skills/` when they can improve the work.
 4. Keep consumer-shared context in `.ai/templates/project/` and mother-only instructions in `.ai/`. Do not duplicate shared text in these extensions.
