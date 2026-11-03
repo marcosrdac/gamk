@@ -27,8 +27,8 @@ flowchart LR
         direction TB
         W["work/"]
         L["logs/"]
-        D["decisions/"]
         K["wiki/"]
+        D["decisions/"]
         I["investigations/"]
         F["forms/"]
         P["workflows/"]
@@ -37,7 +37,7 @@ flowchart LR
         T["templates/"]
         G["global/"]
 
-        W ~~~ L ~~~ D ~~~ K ~~~ I ~~~ F ~~~ P ~~~ S ~~~ R ~~~ T ~~~ G
+        W ~~~ L ~~~ K ~~~ D ~~~ I ~~~ F ~~~ P ~~~ S ~~~ R ~~~ T ~~~ G
     end
 
     style G fill:transparent,stroke:#666,stroke-dasharray: 5 5
@@ -163,7 +163,7 @@ The installed `AGENTS.md` gives the agent the startup contract. In broad terms, 
 
 1. discover the project's applicable rules, skills, and workflows;
 2. inspect `.ai/work/doing/` before starting new work;
-3. preserve continuity in tasks, decisions, logs, investigations, and forms;
+3. preserve continuity in tasks, logs, wiki, decisions, investigations, and forms;
 4. follow the project's instructions before optional global defaults;
 5. ask before consequential migrations or destructive changes;
 6. close completed tasks and clean temporary worktrees safely.
@@ -172,8 +172,8 @@ The directories have distinct jobs:
 
 - `work/` is the execution queue: active, next, backlog, blocked, done, and abandoned work;
 - `logs/` is the chronological project journal;
-- `decisions/` stores durable commitments and trade-offs;
 - `wiki/` is the current, consolidated project knowledge;
+- `decisions/` stores durable commitments and trade-offs;
 - `investigations/` stores substantial research with evidence and conclusions;
 - `forms/` stores structured, asynchronous user decisions;
 - `global/` is optional shared context, either a directory or local symlink;
@@ -182,7 +182,7 @@ The directories have distinct jobs:
 - `rules/` contains mandatory context-specific behavior;
 - `templates/` contains reusable document structures.
 
-This division prevents a chat transcript, a task queue, a permanent decision, and a one-off investigation from becoming one unsearchable pile.
+This division prevents a chat transcript, a task queue, current knowledge, a permanent decision, and a one-off investigation from becoming one unsearchable pile.
 
 ## Safety and migration model
 
@@ -311,9 +311,9 @@ gamk/
 │   └── finish-worktree.py           Safe completed-worktree cleanup
 ├── .ai/
 │   ├── work/                        This repository's task state
-│   ├── decisions/                   Architectural commitments
 │   ├── logs/                        Project journal
 │   ├── wiki/                        Current architecture/operations knowledge
+│   ├── decisions/                   Architectural commitments
 │   ├── rules/                       Mother-local mandatory rules
 │   ├── skills/                      Mother-local capabilities
 │   └── workflows/                   Mother-local procedures
